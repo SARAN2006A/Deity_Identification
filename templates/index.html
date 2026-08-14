@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deity Sculpture Classifier AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #090d16;
+            --card-bg: rgba(18, 24, 38, 0.75);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --accent-purple: #8b5cf6;
+            --accent-cyan: #06b6d4;
+            --accent-amber: #f59e0b;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1rem;
+            background-image: 
+                radial-gradient(circle at 15% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 45%),
+                radial-gradient(circle at 85% 80%, rgba(6, 182, 212, 0.15) 0%, transparent 45%);
+            background-attachment: fixed;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            max-width: 650px;
+        }
+
+        .header h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.75rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffffff 0%, #a5b4fc 50%, #38bdf8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.02em;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 950px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .upload-section {
+            align-items: center;
+            justify-content: center;
+        }
+
+        .drop-zone {
+            width: 100%;
+            height: 280px;
+            border: 2px dashed rgba(139, 92, 246, 0.4);
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(139, 92, 246, 0.03);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .drop-zone:hover, .drop-zone.dragover {
+            border-color: var(--accent-cyan);
+            background: rgba(6, 182, 212, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .drop-zone-icon {
+            width: 56px;
+            height: 56px;
+            stroke: var(--accent-purple);
+            margin-bottom: 1rem;
+            transition: transform 0.3s ease;
+        }
+
+        .drop-zone:hover .drop-zone-icon {
+            transform: scale(1.1);
+            stroke: var(--accent-cyan);
+        }
+
+        .drop-zone p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .drop-zone span.browse-btn {
+            color: var(--accent-cyan);
+            font-weight: 600;
+            text-decoration: underline;
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        .preview-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: none;
+            border-radius: 14px;
+        }
+
+        .btn-classify {
+            width: 100%;
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+            border: none;
+            border-radius: 14px;
+            color: white;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-classify:hover:not(:disabled) {
+            opacity: 0.95;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px rgba(6, 182, 212, 0.4);
+        }
+
+        .btn-classify:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+            display: none;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Results Section */
+        .results-section h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .placeholder-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--text-muted);
+            text-align: center;
+            gap: 1rem;
+        }
+
+        .placeholder-state svg {
+            opacity: 0.4;
+        }
+
+        .top-prediction {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(6, 182, 212, 0.2));
+            border: 1px solid rgba(139, 92, 246, 0.4);
+            border-radius: 16px;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .top-prediction .deity-name {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 800;
+            text-transform: capitalize;
+            color: white;
+        }
+
+        .top-prediction .confidence-badge {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #38bdf8;
+            backdrop-filter: blur(4px);
+        }
+
+        .prob-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .prob-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .prob-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-transform: capitalize;
+        }
+
+        .prob-header span.pct {
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .bar-bg {
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--accent-purple), var(--accent-cyan));
+            border-radius: 6px;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .info-box {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .info-box h4 {
+            color: var(--text-main);
+            margin-bottom: 0.3rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Deity Sculpture AI Classifier</h1>
+        <p>Upload or drag & drop an image of a deity sculpture to classify it among <strong>Amman</strong>, <strong>Murugan</strong>, <strong>Perumal</strong>, or <strong>Shivan</strong> using PyTorch ResNet50.</p>
+    </div>
+
+    <div class="container">
+        <!-- Upload Section -->
+        <div class="glass-card upload-section">
+            <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
+                <svg class="drop-zone-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                </svg>
+                <p>Drag & drop sculpture image here</p>
+                <p>or <span class="browse-btn">Browse File</span></p>
+                <input type="file" id="file-input" accept="image/*">
+                <img id="preview-img" class="preview-img" alt="Preview">
+            </div>
+
+            <button id="classify-btn" class="btn-classify" disabled onclick="uploadAndPredict()">
+                <div class="spinner" id="spinner"></div>
+                <span id="btn-text">Predict Deity</span>
+            </button>
+        </div>
+
+        <!-- Results Section -->
+        <div class="glass-card results-section">
+            <h2>Classification Output</h2>
+            
+            <div id="placeholder-state" class="placeholder-state">
+                <svg width="64" height="64" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                </svg>
+                <p>Upload an image and click "Predict Deity" to view AI confidence scores.</p>
+            </div>
+
+            <div id="results-content" style="display: none;">
+                <div class="top-prediction">
+                    <div>
+                        <span style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-cyan); font-weight: 700;">Top Match</span>
+                        <div id="top-name" class="deity-name">--</div>
+                    </div>
+                    <div id="top-confidence" class="confidence-badge">0%</div>
+                </div>
+
+                <div class="prob-list" id="prob-list">
+                    <!-- Progress bars will be injected dynamically -->
+                </div>
+
+                <div class="info-box" id="info-box">
+                    <h4 id="info-title">Deity Characteristics</h4>
+                    <p id="info-desc">AI predictions are based on trained visual attributes of South Indian deity iconography.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const previewImg = document.getElementById('preview-img');
+        const classifyBtn = document.getElementById('classify-btn');
+        const spinner = document.getElementById('spinner');
+        const btnText = document.getElementById('btn-text');
+        
+        const placeholderState = document.getElementById('placeholder-state');
+        const resultsContent = document.getElementById('results-content');
+        const topName = document.getElementById('top-name');
+        const topConfidence = document.getElementById('top-confidence');
+        const probList = document.getElementById('prob-list');
+
+        let selectedFile = null;
+
+        const DEITY_INFO = {
+            'amman': 'Amman refers to Goddess Shakti/Parvati avatars, often depicted with trident (Trishula), kumkum, crown, or distinct feminine divine ornaments.',
+            'murugan': 'Lord Murugan (Kartikeya) is often depicted with a Vel (spear), peacock mount, divine youthful posture, or sacred ornaments.',
+            'perumal': 'Lord Perumal (Vishnu) is identified by Shankha (conch), Chakra (discus), distinctive Namam forehead mark, and regal posture.',
+            'shivan': 'Lord Shiva is characterized by Trishula, crescent moon, matted hair (Jata), damaru, or Lingam form.'
+        };
+
+        // File selection handling
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+
+        // Drag and drop events
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                dropZone.classList.add('dragover');
+            }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('dragover');
+            }, false);
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            if (dt.files.length > 0) {
+                handleFile(dt.files[0]);
+            }
+        });
+
+        function handleFile(file) {
+            if (!file.type.startsWith('image/')) {
+                alert('Please upload an image file.');
+                return;
+            }
+            selectedFile = file;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                previewImg.src = e.target.result;
+                previewImg.style.display = 'block';
+                classifyBtn.disabled = false;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        async function uploadAndPredict() {
+            if (!selectedFile) return;
+
+            // UI loading state
+            classifyBtn.disabled = true;
+            spinner.style.display = 'block';
+            btnText.textContent = 'Analyzing...';
+
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+
+                if (data.error) {
+                    alert('Prediction Error: ' + data.error);
+                    return;
+                }
+
+                displayResults(data);
+            } catch (err) {
+                alert('Network or Server Error: ' + err.message);
+            } finally {
+                classifyBtn.disabled = false;
+                spinner.style.display = 'none';
+                btnText.textContent = 'Predict Deity';
+            }
+        }
+
+        function displayResults(data) {
+            placeholderState.style.display = 'none';
+            resultsContent.style.display = 'block';
+
+            topName.textContent = data.best_guess;
+            topConfidence.textContent = data.best_confidence.toFixed(1) + '%';
+
+            // Populate per-class breakdown
+            probList.innerHTML = '';
+            data.predictions.forEach(item => {
+                const itemEl = document.createElement('div');
+                itemEl.className = 'prob-item';
+                itemEl.innerHTML = `
+                    <div class="prob-header">
+                        <span>${item.class}</span>
+                        <span class="pct">${item.confidence.toFixed(1)}%</span>
+                    </div>
+                    <div class="bar-bg">
+                        <div class="bar-fill" style="width: 0%"></div>
+                    </div>
+                `;
+                probList.appendChild(itemEl);
+
+                // Trigger animation after append
+                setTimeout(() => {
+                    itemEl.querySelector('.bar-fill').style.width = item.confidence + '%';
+                }, 50);
+            });
+
+            // Update info box
+            const infoDesc = document.getElementById('info-desc');
+            const infoTitle = document.getElementById('info-title');
+            const deityKey = data.best_guess.toLowerCase();
+            if (DEITY_INFO[deityKey]) {
+                infoTitle.textContent = `${data.best_guess.toUpperCase()} Iconography`;
+                infoDesc.textContent = DEITY_INFO[deityKey];
+            }
+        }
+    </script>
+</body>
+</html>
