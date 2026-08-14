@@ -3,20 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deity Sculpture Classifier AI</title>
+    <title>Deity Identification AI — Flask REST API & Web Frontend</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-dark: #090d16;
-            --card-bg: rgba(18, 24, 38, 0.75);
+            --bg-dark: #080b12;
+            --bg-surface: #0f172a;
+            --card-bg: rgba(15, 23, 42, 0.75);
             --card-border: rgba(255, 255, 255, 0.08);
-            --accent-purple: #8b5cf6;
+            --accent-violet: #8b5cf6;
             --accent-cyan: #06b6d4;
             --accent-amber: #f59e0b;
-            --text-main: #f3f4f6;
-            --text-muted: #9ca3af;
+            --accent-emerald: #10b981;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
         }
 
         * {
@@ -26,119 +29,282 @@
         }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: var(--bg-dark);
-            color: var(--text-main);
+            color: var(--text-primary);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            padding: 2rem 1rem;
             background-image: 
-                radial-gradient(circle at 15% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 45%),
-                radial-gradient(circle at 85% 80%, rgba(6, 182, 212, 0.15) 0%, transparent 45%);
+                radial-gradient(circle at 10% 15%, rgba(139, 92, 246, 0.18) 0%, transparent 45%),
+                radial-gradient(circle at 90% 85%, rgba(6, 182, 212, 0.15) 0%, transparent 45%),
+                radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.05) 0%, transparent 60%);
             background-attachment: fixed;
         }
 
-        .header {
-            text-align: center;
-            margin-bottom: 2.5rem;
-            max-width: 650px;
+        /* Header Navigation */
+        .navbar {
+            width: 100%;
+            padding: 1.25rem 2rem;
+            border-bottom: 1px solid var(--card-border);
+            background: rgba(8, 11, 18, 0.8);
+            backdrop-filter: blur(12px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        .header h1 {
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+        }
+
+        .brand-icon {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, var(--accent-violet), var(--accent-cyan));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+        }
+
+        .brand-icon svg {
+            width: 22px;
+            height: 22px;
+            stroke: white;
+        }
+
+        .brand-text {
             font-family: 'Outfit', sans-serif;
-            font-size: 2.75rem;
+            font-size: 1.35rem;
             font-weight: 800;
-            background: linear-gradient(135deg, #ffffff 0%, #a5b4fc 50%, #38bdf8 100%);
+            background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 0.75rem;
+        }
+
+        .nav-items {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            padding: 0.4rem 0.85rem;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--accent-emerald);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent-emerald);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent-emerald);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: color 0.2s ease;
+            cursor: pointer;
+        }
+
+        .nav-link:hover {
+            color: var(--accent-cyan);
+        }
+
+        /* Main Layout */
+        .main-content {
+            flex: 1;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 2.5rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
+        }
+
+        .hero {
+            text-align: center;
+            max-width: 750px;
+            margin: 0 auto;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 0.35rem 1rem;
+            border-radius: 30px;
+            background: rgba(139, 92, 246, 0.12);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            color: #c084fc;
+            font-size: 0.82rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        .hero h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            line-height: 1.15;
+            background: linear-gradient(135deg, #ffffff 20%, #a5b4fc 60%, #38bdf8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
             letter-spacing: -0.02em;
         }
 
-        .header p {
-            color: var(--text-muted);
-            font-size: 1.05rem;
+        .hero p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
             line-height: 1.6;
         }
 
-        .container {
-            width: 100%;
-            max-width: 950px;
+        .app-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr 1.1fr;
             gap: 2rem;
         }
 
-        @media (max-width: 768px) {
-            .container {
+        @media (max-width: 900px) {
+            .app-grid {
                 grid-template-columns: 1fr;
+            }
+            .hero h1 {
+                font-size: 2.25rem;
             }
         }
 
         .glass-card {
             background: var(--card-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--card-border);
             border-radius: 24px;
             padding: 2rem;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
             display: flex;
             flex-direction: column;
         }
 
-        .upload-section {
+        .card-header {
+            margin-bottom: 1.5rem;
+            display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
         }
 
+        .card-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .card-title svg {
+            width: 22px;
+            height: 22px;
+            stroke: var(--accent-cyan);
+        }
+
+        /* Upload Zone */
         .drop-zone {
             width: 100%;
-            height: 280px;
-            border: 2px dashed rgba(139, 92, 246, 0.4);
-            border-radius: 16px;
+            min-height: 300px;
+            border: 2px dashed rgba(139, 92, 246, 0.35);
+            border-radius: 18px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            background: rgba(139, 92, 246, 0.03);
+            background: rgba(139, 92, 246, 0.02);
             position: relative;
             overflow: hidden;
+            padding: 1.5rem;
+            text-align: center;
         }
 
         .drop-zone:hover, .drop-zone.dragover {
             border-color: var(--accent-cyan);
-            background: rgba(6, 182, 212, 0.08);
+            background: rgba(6, 182, 212, 0.06);
             transform: translateY(-2px);
         }
 
-        .drop-zone-icon {
-            width: 56px;
-            height: 56px;
-            stroke: var(--accent-purple);
-            margin-bottom: 1rem;
+        .upload-icon-wrapper {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: rgba(139, 92, 246, 0.12);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.2rem;
             transition: transform 0.3s ease;
         }
 
-        .drop-zone:hover .drop-zone-icon {
+        .drop-zone:hover .upload-icon-wrapper {
             transform: scale(1.1);
+            background: rgba(6, 182, 212, 0.15);
+        }
+
+        .upload-icon {
+            width: 32px;
+            height: 32px;
+            stroke: var(--accent-violet);
+            transition: stroke 0.3s ease;
+        }
+
+        .drop-zone:hover .upload-icon {
             stroke: var(--accent-cyan);
         }
 
-        .drop-zone p {
-            font-size: 0.95rem;
-            color: var(--text-muted);
-            margin-bottom: 0.5rem;
+        .drop-zone-primary {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.4rem;
         }
 
-        .drop-zone span.browse-btn {
+        .drop-zone-secondary {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .browse-text {
             color: var(--accent-cyan);
-            font-weight: 600;
             text-decoration: underline;
+            font-weight: 700;
         }
 
         #file-input {
@@ -148,19 +314,20 @@
         .preview-img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain;
             position: absolute;
             top: 0;
             left: 0;
             display: none;
-            border-radius: 14px;
+            border-radius: 16px;
+            background-color: rgba(0, 0, 0, 0.6);
         }
 
-        .btn-classify {
+        .btn-predict {
             width: 100%;
             margin-top: 1.5rem;
-            padding: 1rem;
-            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+            padding: 1.1rem;
+            background: linear-gradient(135deg, var(--accent-violet), var(--accent-cyan));
             border: none;
             border-radius: 14px;
             color: white;
@@ -169,27 +336,28 @@
             font-weight: 700;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.35);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.5rem;
+            gap: 0.6rem;
         }
 
-        .btn-classify:hover:not(:disabled) {
-            opacity: 0.95;
+        .btn-predict:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 12px 25px rgba(6, 182, 212, 0.4);
+            box-shadow: 0 12px 30px rgba(6, 182, 212, 0.45);
+            filter: brightness(1.1);
         }
 
-        .btn-classify:disabled {
-            opacity: 0.5;
+        .btn-predict:disabled {
+            opacity: 0.45;
             cursor: not-allowed;
+            box-shadow: none;
         }
 
         .spinner {
-            width: 20px;
-            height: 20px;
+            width: 22px;
+            height: 22px;
             border: 3px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
             border-top-color: white;
@@ -201,172 +369,346 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Results Section */
-        .results-section h2 {
-            font-family: 'Outfit', sans-serif;
-            font-size: 1.5rem;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .placeholder-state {
+        /* Results Display */
+        .empty-results {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100%;
+            min-height: 320px;
             color: var(--text-muted);
             text-align: center;
             gap: 1rem;
         }
 
-        .placeholder-state svg {
-            opacity: 0.4;
+        .empty-results svg {
+            opacity: 0.3;
         }
 
-        .top-prediction {
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(6, 182, 212, 0.2));
-            border: 1px solid rgba(139, 92, 246, 0.4);
-            border-radius: 16px;
-            padding: 1.25rem;
+        .top-prediction-card {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(6, 182, 212, 0.15));
+            border: 1px solid rgba(139, 92, 246, 0.35);
+            border-radius: 18px;
+            padding: 1.5rem;
             margin-bottom: 1.5rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
 
-        .top-prediction .deity-name {
+        .top-prediction-info h3 {
             font-family: 'Outfit', sans-serif;
-            font-size: 1.75rem;
+            font-size: 1.85rem;
             font-weight: 800;
-            text-transform: capitalize;
             color: white;
+            text-transform: capitalize;
+            line-height: 1.2;
         }
 
-        .top-prediction .confidence-badge {
-            background: rgba(255, 255, 255, 0.15);
-            padding: 0.4rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.95rem;
+        .top-prediction-subtitle {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--accent-cyan);
             font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .confidence-pill {
+            background: rgba(6, 182, 212, 0.18);
+            border: 1px solid rgba(6, 182, 212, 0.4);
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 800;
             color: #38bdf8;
-            backdrop-filter: blur(4px);
         }
 
-        .prob-list {
+        .prob-bars-list {
             display: flex;
             flex-direction: column;
-            gap: 1rem;
+            gap: 1.1rem;
+            margin-bottom: 1.5rem;
         }
 
-        .prob-item {
+        .prob-row {
             display: flex;
             flex-direction: column;
-            gap: 0.35rem;
+            gap: 0.4rem;
         }
 
-        .prob-header {
+        .prob-row-header {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             font-size: 0.95rem;
-            font-weight: 500;
+            font-weight: 600;
             text-transform: capitalize;
         }
 
-        .prob-header span.pct {
-            color: var(--text-muted);
-            font-weight: 600;
+        .prob-percentage {
+            color: var(--text-secondary);
+            font-weight: 700;
         }
 
-        .bar-bg {
+        .prob-track {
             width: 100%;
             height: 10px;
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.07);
             border-radius: 6px;
             overflow: hidden;
         }
 
-        .bar-fill {
+        .prob-fill {
             height: 100%;
             width: 0%;
-            background: linear-gradient(90deg, var(--accent-purple), var(--accent-cyan));
+            background: linear-gradient(90deg, var(--accent-violet), var(--accent-cyan));
             border-radius: 6px;
             transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .info-box {
-            margin-top: 1.5rem;
-            padding: 1rem;
+        /* Iconography Details Box */
+        .iconography-card {
             background: rgba(255, 255, 255, 0.03);
-            border-radius: 12px;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            line-height: 1.5;
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 1.25rem;
+            font-size: 0.9rem;
         }
 
-        .info-box h4 {
-            color: var(--text-main);
-            margin-bottom: 0.3rem;
+        .iconography-card h4 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.05rem;
+            color: white;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .iconography-card p {
+            color: var(--text-secondary);
+            line-height: 1.55;
+            margin-bottom: 0.75rem;
+        }
+
+        .feature-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .tag {
+            background: rgba(139, 92, 246, 0.12);
+            border: 1px solid rgba(139, 92, 246, 0.25);
+            color: #d8b4fe;
+            font-size: 0.78rem;
+            font-weight: 600;
+            padding: 0.25rem 0.65rem;
+            border-radius: 6px;
+        }
+
+        /* API Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 1rem;
+        }
+
+        .modal-body {
+            background: var(--bg-surface);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 680px;
+            padding: 2rem;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-header h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.4rem;
+            color: white;
+        }
+
+        .btn-close {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .btn-close:hover {
+            color: white;
+        }
+
+        .code-snippet {
+            background: #020617;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: #38bdf8;
+            overflow-x: auto;
+            white-space: pre;
         }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h1>Deity Sculpture AI Classifier</h1>
-        <p>Upload or drag & drop an image of a deity sculpture to classify it among <strong>Amman</strong>, <strong>Murugan</strong>, <strong>Perumal</strong>, or <strong>Shivan</strong> using PyTorch ResNet50.</p>
-    </div>
-
-    <div class="container">
-        <!-- Upload Section -->
-        <div class="glass-card upload-section">
-            <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
-                <svg class="drop-zone-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+    <!-- Header Navigation -->
+    <nav class="navbar">
+        <a href="/" class="brand">
+            <div class="brand-icon">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L5.6 15.11a2 2 0 00-2.195 1.157l-1.3 3.25A2 2 0 004.004 22h15.992a2 2 0 001.899-2.483l-2.467-4.089zM12 11a4 4 0 100-8 4 4 0 000 8z"/>
                 </svg>
-                <p>Drag & drop sculpture image here</p>
-                <p>or <span class="browse-btn">Browse File</span></p>
-                <input type="file" id="file-input" accept="image/*">
-                <img id="preview-img" class="preview-img" alt="Preview">
             </div>
+            <span class="brand-text">Deity AI Engine</span>
+        </a>
 
-            <button id="classify-btn" class="btn-classify" disabled onclick="uploadAndPredict()">
-                <div class="spinner" id="spinner"></div>
-                <span id="btn-text">Predict Deity</span>
-            </button>
+        <div class="nav-items">
+            <div class="status-badge" id="status-badge">
+                <div class="status-dot"></div>
+                <span id="status-text">Flask REST API Online</span>
+            </div>
+            <span class="nav-link" onclick="openModal()">API Docs</span>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <main class="main-content">
+
+        <!-- Hero Section -->
+        <header class="hero">
+            <div class="hero-badge">PyTorch ResNet50 Transfer Learning</div>
+            <h1>South Indian Deity Sculpture Classifier</h1>
+            <p>Upload a sculpture image to run inference against our deep learning REST API backend and classify among <strong>Amman</strong>, <strong>Murugan</strong>, <strong>Perumal</strong>, or <strong>Shivan</strong>.</p>
+        </header>
+
+        <!-- App Grid -->
+        <div class="app-grid">
+            
+            <!-- Upload Panel -->
+            <section class="glass-card">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        Upload Image
+                    </h2>
+                </div>
+
+                <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
+                    <div class="upload-icon-wrapper">
+                        <svg class="upload-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                        </svg>
+                    </div>
+                    <p class="drop-zone-primary">Drag & drop sculpture photo here</p>
+                    <p class="drop-zone-secondary">or <span class="browse-text">Browse from computer</span></p>
+                    <input type="file" id="file-input" accept="image/*">
+                    <img id="preview-img" class="preview-img" alt="Preview">
+                </div>
+
+                <button id="predict-btn" class="btn-predict" disabled onclick="submitPrediction()">
+                    <div class="spinner" id="spinner"></div>
+                    <span id="btn-text">Run Model Inference</span>
+                </button>
+            </section>
+
+            <!-- Classification Results Panel -->
+            <section class="glass-card">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                        </svg>
+                        Inference Output
+                    </h2>
+                </div>
+
+                <!-- Empty State -->
+                <div id="empty-state" class="empty-results">
+                    <svg width="64" height="64" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L5.6 15.11a2 2 0 00-2.195 1.157l-1.3 3.25A2 2 0 004.004 22h15.992a2 2 0 001.899-2.483l-2.467-4.089zM12 11a4 4 0 100-8 4 4 0 000 8z"/>
+                    </svg>
+                    <p>Select or drag an image and click <strong>Run Model Inference</strong> to view confidence breakdown.</p>
+                </div>
+
+                <!-- Active Results -->
+                <div id="active-results" style="display: none;">
+                    
+                    <div class="top-prediction-card">
+                        <div class="top-prediction-info">
+                            <div class="top-prediction-subtitle">Predicted Classification</div>
+                            <h3 id="top-class-name">--</h3>
+                        </div>
+                        <div id="top-confidence-pill" class="confidence-pill">0%</div>
+                    </div>
+
+                    <div class="prob-bars-list" id="prob-bars-list">
+                        <!-- Dynamic Probability Bars -->
+                    </div>
+
+                    <div class="iconography-card" id="iconography-card">
+                        <h4 id="icon-title">Deity Iconography Analysis</h4>
+                        <p id="icon-desc">Iconographic details will appear after classification.</p>
+                        <div class="feature-tags" id="feature-tags"></div>
+                    </div>
+
+                </div>
+            </section>
+
         </div>
 
-        <!-- Results Section -->
-        <div class="glass-card results-section">
-            <h2>Classification Output</h2>
-            
-            <div id="placeholder-state" class="placeholder-state">
-                <svg width="64" height="64" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                </svg>
-                <p>Upload an image and click "Predict Deity" to view AI confidence scores.</p>
+    </main>
+
+    <!-- API Docs Modal -->
+    <div class="modal-overlay" id="api-modal">
+        <div class="modal-body">
+            <div class="modal-header">
+                <h3>Backend REST API Endpoint</h3>
+                <button class="btn-close" onclick="closeModal()">&times;</button>
             </div>
-
-            <div id="results-content" style="display: none;">
-                <div class="top-prediction">
-                    <div>
-                        <span style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-cyan); font-weight: 700;">Top Match</span>
-                        <div id="top-name" class="deity-name">--</div>
-                    </div>
-                    <div id="top-confidence" class="confidence-badge">0%</div>
-                </div>
-
-                <div class="prob-list" id="prob-list">
-                    <!-- Progress bars will be injected dynamically -->
-                </div>
-
-                <div class="info-box" id="info-box">
-                    <h4 id="info-title">Deity Characteristics</h4>
-                    <p id="info-desc">AI predictions are based on trained visual attributes of South Indian deity iconography.</p>
-                </div>
-            </div>
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                The Flask backend exposes a POST endpoint at <code>/api/predict</code>. You can submit standard multipart form data containing an image file.
+            </p>
+            <div class="code-snippet">curl -X POST -F "file=@sculpture.jpg" http://127.0.0.1:5000/api/predict</div>
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">Response Schema (JSON):</p>
+            <div class="code-snippet">{
+  "success": true,
+  "best_guess": "murugan",
+  "best_confidence": 92.4,
+  "predictions": [
+    { "class": "murugan", "confidence": 92.4 },
+    { "class": "shivan", "confidence": 4.1 },
+    ...
+  ]
+}</div>
         </div>
     </div>
 
@@ -374,57 +716,64 @@
         const dropZone = document.getElementById('drop-zone');
         const fileInput = document.getElementById('file-input');
         const previewImg = document.getElementById('preview-img');
-        const classifyBtn = document.getElementById('classify-btn');
+        const predictBtn = document.getElementById('predict-btn');
         const spinner = document.getElementById('spinner');
         const btnText = document.getElementById('btn-text');
-        
-        const placeholderState = document.getElementById('placeholder-state');
-        const resultsContent = document.getElementById('results-content');
-        const topName = document.getElementById('top-name');
-        const topConfidence = document.getElementById('top-confidence');
-        const probList = document.getElementById('prob-list');
+
+        const emptyState = document.getElementById('empty-state');
+        const activeResults = document.getElementById('active-results');
+        const topClassName = document.getElementById('top-class-name');
+        const topConfidencePill = document.getElementById('top-confidence-pill');
+        const probBarsList = document.getElementById('prob-bars-list');
+        const iconTitle = document.getElementById('icon-title');
+        const iconDesc = document.getElementById('icon-desc');
+        const featureTags = document.getElementById('feature-tags');
 
         let selectedFile = null;
 
-        const DEITY_INFO = {
-            'amman': 'Amman refers to Goddess Shakti/Parvati avatars, often depicted with trident (Trishula), kumkum, crown, or distinct feminine divine ornaments.',
-            'murugan': 'Lord Murugan (Kartikeya) is often depicted with a Vel (spear), peacock mount, divine youthful posture, or sacred ornaments.',
-            'perumal': 'Lord Perumal (Vishnu) is identified by Shankha (conch), Chakra (discus), distinctive Namam forehead mark, and regal posture.',
-            'shivan': 'Lord Shiva is characterized by Trishula, crescent moon, matted hair (Jata), damaru, or Lingam form.'
-        };
+        // Check backend health on load
+        fetch('/api/health')
+            .then(res => res.json())
+            .then(data => {
+                const statusText = document.getElementById('status-text');
+                if (data.status === 'online') {
+                    statusText.textContent = `Flask REST API Online (${data.device.toUpperCase()})`;
+                }
+            })
+            .catch(() => {
+                document.getElementById('status-text').textContent = 'Backend Offline';
+            });
 
-        // File selection handling
+        // File Selection Handlers
         fileInput.addEventListener('change', (e) => {
             if (e.target.files.length > 0) {
-                handleFile(e.target.files[0]);
+                handleSelectedFile(e.target.files[0]);
             }
         });
 
-        // Drag and drop events
-        ['dragenter', 'dragover'].forEach(eventName => {
-            dropZone.addEventListener(eventName, (e) => {
+        ['dragenter', 'dragover'].forEach(evt => {
+            dropZone.addEventListener(evt, (e) => {
                 e.preventDefault();
                 dropZone.classList.add('dragover');
-            }, false);
+            });
         });
 
-        ['dragleave', 'drop'].forEach(eventName => {
-            dropZone.addEventListener(eventName, (e) => {
+        ['dragleave', 'drop'].forEach(evt => {
+            dropZone.addEventListener(evt, (e) => {
                 e.preventDefault();
                 dropZone.classList.remove('dragover');
-            }, false);
+            });
         });
 
         dropZone.addEventListener('drop', (e) => {
-            const dt = e.dataTransfer;
-            if (dt.files.length > 0) {
-                handleFile(dt.files[0]);
+            if (e.dataTransfer.files.length > 0) {
+                handleSelectedFile(e.dataTransfer.files[0]);
             }
         });
 
-        function handleFile(file) {
+        function handleSelectedFile(file) {
             if (!file.type.startsWith('image/')) {
-                alert('Please upload an image file.');
+                alert('Please select a valid image file (JPG, PNG, WebP).');
                 return;
             }
             selectedFile = file;
@@ -432,81 +781,86 @@
             reader.onload = (e) => {
                 previewImg.src = e.target.result;
                 previewImg.style.display = 'block';
-                classifyBtn.disabled = false;
+                predictBtn.disabled = false;
             };
             reader.readAsDataURL(file);
         }
 
-        async function uploadAndPredict() {
+        async function submitPrediction() {
             if (!selectedFile) return;
 
-            // UI loading state
-            classifyBtn.disabled = true;
+            predictBtn.disabled = true;
             spinner.style.display = 'block';
-            btnText.textContent = 'Analyzing...';
+            btnText.textContent = 'Running PyTorch Model...';
 
             const formData = new FormData();
             formData.append('file', selectedFile);
 
             try {
-                const response = await fetch('/predict', {
+                const response = await fetch('/api/predict', {
                     method: 'POST',
                     body: formData
                 });
                 const data = await response.json();
 
-                if (data.error) {
-                    alert('Prediction Error: ' + data.error);
+                if (!response.ok || data.error) {
+                    alert('Prediction Error: ' + (data.error || 'Server error'));
                     return;
                 }
 
-                displayResults(data);
+                renderResults(data);
             } catch (err) {
-                alert('Network or Server Error: ' + err.message);
+                alert('Network Connection Error: ' + err.message);
             } finally {
-                classifyBtn.disabled = false;
+                predictBtn.disabled = false;
                 spinner.style.display = 'none';
-                btnText.textContent = 'Predict Deity';
+                btnText.textContent = 'Run Model Inference';
             }
         }
 
-        function displayResults(data) {
-            placeholderState.style.display = 'none';
-            resultsContent.style.display = 'block';
+        function renderResults(data) {
+            emptyState.style.display = 'none';
+            activeResults.style.display = 'block';
 
-            topName.textContent = data.best_guess;
-            topConfidence.textContent = data.best_confidence.toFixed(1) + '%';
+            topClassName.textContent = data.best_guess;
+            topConfidencePill.textContent = data.best_confidence.toFixed(1) + '%';
 
-            // Populate per-class breakdown
-            probList.innerHTML = '';
+            // Populate probability progress bars
+            probBarsList.innerHTML = '';
             data.predictions.forEach(item => {
-                const itemEl = document.createElement('div');
-                itemEl.className = 'prob-item';
-                itemEl.innerHTML = `
-                    <div class="prob-header">
+                const row = document.createElement('div');
+                row.className = 'prob-row';
+                row.innerHTML = `
+                    <div class="prob-row-header">
                         <span>${item.class}</span>
-                        <span class="pct">${item.confidence.toFixed(1)}%</span>
+                        <span class="prob-percentage">${item.confidence.toFixed(1)}%</span>
                     </div>
-                    <div class="bar-bg">
-                        <div class="bar-fill" style="width: 0%"></div>
+                    <div class="prob-track">
+                        <div class="prob-fill" style="width: 0%"></div>
                     </div>
                 `;
-                probList.appendChild(itemEl);
+                probBarsList.appendChild(row);
 
-                // Trigger animation after append
                 setTimeout(() => {
-                    itemEl.querySelector('.bar-fill').style.width = item.confidence + '%';
-                }, 50);
+                    row.querySelector('.prob-fill').style.width = item.confidence + '%';
+                }, 60);
             });
 
-            // Update info box
-            const infoDesc = document.getElementById('info-desc');
-            const infoTitle = document.getElementById('info-title');
-            const deityKey = data.best_guess.toLowerCase();
-            if (DEITY_INFO[deityKey]) {
-                infoTitle.textContent = `${data.best_guess.toUpperCase()} Iconography`;
-                infoDesc.textContent = DEITY_INFO[deityKey];
+            // Update Iconography metadata card
+            const meta = data.best_metadata;
+            if (meta && meta.title) {
+                iconTitle.textContent = meta.title;
+                iconDesc.textContent = meta.description;
+                featureTags.innerHTML = (meta.key_features || []).map(f => `<span class="tag">${f}</span>`).join('');
             }
+        }
+
+        function openModal() {
+            document.getElementById('api-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('api-modal').style.display = 'none';
         }
     </script>
 </body>
