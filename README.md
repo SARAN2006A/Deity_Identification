@@ -9,7 +9,8 @@ A transfer-learning image classifier (PyTorch ResNet50 backbone) and interactive
 - **Transfer Learning Backbone**: Fine-tuned ResNet50 architecture with custom dropout classification head.
 - **Dataset Tools**: Includes automated Wikimedia Commons scraper (`wikimedia_scraper.py`) and batch dataset importer (`import_dataset.py`).
 - **Class Imbalance Handling**: Automatically computes inverse-frequency weighted cross-entropy loss.
-- **Flask REST API & Web Frontend**: Modern glassmorphism web UI with real-time confidence breakdown, iconography details, and `/api/predict` JSON endpoint.
+- **Streamlined Web Interface**: Modern glassmorphism UI supporting drag-and-drop sculpture upload and instant probability & iconographic breakdown.
+- **REST API Endpoint**: `/api/predict` JSON endpoint for automated multi-part image inference.
 - **Evaluation Suite**: Generates per-class precision, recall, and confusion matrix (`evaluate.py`).
 
 ---

@@ -4,7 +4,7 @@ import torch
 import torch.nn.functional as F
 from PIL import Image
 from torchvision import models, transforms
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, send_from_directory
 
 app = Flask(__name__)
 
@@ -94,6 +94,15 @@ def get_deities_info():
         "status": "success",
         "metadata": DEITY_METADATA
     })
+
+@app.route("/sample_image/<deity>", methods=["GET"])
+def get_sample_image(deity):
+    deity_dir = os.path.join(app.root_path, "deity_dataset", deity.lower())
+    if os.path.exists(deity_dir):
+        files = [f for f in os.listdir(deity_dir) if f.lower().endswith(('.jpg', '.jpeg', '.png', '.webp'))]
+        if files:
+            return send_from_directory(deity_dir, files[0])
+    return jsonify({"error": f"No images found for deity: {deity}"}), 404
 
 @app.route("/predict", methods=["POST"])
 @app.route("/api/predict", methods=["POST"])

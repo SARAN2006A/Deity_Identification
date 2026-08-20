@@ -859,10 +859,7 @@
                 <div class="status-pulse"></div>
                 <span id="status-text">Flask REST API Online</span>
             </div>
-            <span class="nav-link" onclick="openModal()">
-                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
-                API Console
-            </span>
+
         </div>
     </nav>
 
@@ -878,25 +875,7 @@
             <h1>South Indian Deity Sculpture Recognition System</h1>
             <p>Upload any temple sculpture photograph to run deep transfer-learning inference across <strong>Amman</strong>, <strong>Murugan</strong>, <strong>Perumal</strong>, and <strong>Shivan</strong> with real-time iconographic landmark analysis.</p>
 
-            <!-- Metrics Bar -->
-            <div class="metrics-grid">
-                <div class="metric-card">
-                    <div class="metric-val">1,166+</div>
-                    <div class="metric-lbl">Cataloged Sculptures</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-val">89.95%</div>
-                    <div class="metric-lbl">Validation Accuracy</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-val">4 Classes</div>
-                    <div class="metric-lbl">Primary Deities</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-val">&lt; 45ms</div>
-                    <div class="metric-lbl">Inference Latency</div>
-                </div>
-            </div>
+
         </header>
 
         <!-- Studio Grid (Upload + Results) -->
@@ -980,77 +959,11 @@
 
         </div>
 
-        <!-- Sample Presets Showcase Gallery -->
-        <section class="preset-section">
-            <div class="section-heading">
-                <h2>Supported Deity Sculpture Catalog</h2>
-                <p>Click any preset card below to test iconography attributes</p>
-            </div>
 
-            <div class="gallery-grid">
-                
-                <div class="preset-card" onclick="selectPreset('amman')">
-                    <div class="preset-avatar" style="background-image: linear-gradient(180deg, transparent, rgba(0,0,0,0.8)), url('https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Meenakshi_Amman.jpg/400px-Meenakshi_Amman.jpg');">
-                        <span class="preset-tag">Goddess Amman</span>
-                    </div>
-                    <div class="preset-info">Trishula (Trident), Kirita-mukuta crown, Lotus flower, and divine feminine standing posture.</div>
-                </div>
-
-                <div class="preset-card" onclick="selectPreset('murugan')">
-                    <div class="preset-avatar" style="background-image: linear-gradient(180deg, transparent, rgba(0,0,0,0.8)), url('https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Kartikeya_statue_Palani.jpg/400px-Kartikeya_statue_Palani.jpg');">
-                        <span class="preset-tag">Lord Murugan</span>
-                    </div>
-                    <div class="preset-info">Vel (Sacred Spear), Peacock Mount (Mayil), youthful posture, and rooster banner.</div>
-                </div>
-
-                <div class="preset-card" onclick="selectPreset('perumal')">
-                    <div class="preset-avatar" style="background-image: linear-gradient(180deg, transparent, rgba(0,0,0,0.8)), url('https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Vishnu_stone_sculpture.jpg/400px-Vishnu_stone_sculpture.jpg');">
-                        <span class="preset-tag">Lord Perumal</span>
-                    </div>
-                    <div class="preset-info">Shankha (Conch), Chakra (Discus), distinctive Namam forehead mark, and four-armed posture.</div>
-                </div>
-
-                <div class="preset-card" onclick="selectPreset('shivan')">
-                    <div class="preset-avatar" style="background-image: linear-gradient(180deg, transparent, rgba(0,0,0,0.8)), url('https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Nataraja_bronze_sculpture.jpg/400px-Nataraja_bronze_sculpture.jpg');">
-                        <span class="preset-tag">Lord Shivan</span>
-                    </div>
-                    <div class="preset-info">Nataraja cosmic dance posture, Trishula & Damaru, crescent moon, and Shiva Lingam form.</div>
-                </div>
-
-            </div>
-        </section>
 
     </main>
 
-    <!-- REST API Documentation Modal -->
-    <div class="modal-overlay" id="api-modal">
-        <div class="modal-card">
-            <div class="modal-header">
-                <h3>Backend REST API Endpoint Specification</h3>
-                <button class="btn-close" onclick="closeModal()">&times;</button>
-            </div>
-            <p style="color: var(--text-sub); font-size: 0.92rem; line-height: 1.6;">
-                The Flask backend exposes a POST endpoint at <code>/api/predict</code> accepting multipart image payloads for automated batch inference:
-            </p>
-            <div class="code-box">curl -X POST -F "file=@sculpture.jpg" http://127.0.0.1:5000/api/predict</div>
-            <p style="color: var(--text-sub); font-size: 0.92rem;">Response Schema (JSON):</p>
-            <div class="code-box">{
-  "success": true,
-  "best_guess": "murugan",
-  "best_confidence": 92.4,
-  "best_metadata": {
-    "title": "Lord Murugan / Kartikeya",
-    "key_features": ["Vel (Sacred Spear)", "Peacock Mount (Mayil)"]
-  },
-  "predictions": [
-    { "class": "murugan", "confidence": 92.4 },
-    { "class": "shivan", "confidence": 4.1 },
-    { "class": "perumal", "confidence": 2.2 },
-    { "class": "amman", "confidence": 1.3 }
-  ]
-}</div>
-        </div>
-    </div>
+
 
     <!-- Corporate Footer -->
     <footer class="footer">
@@ -1060,7 +973,6 @@
             <span class="tech-pill">Transfer Learning</span>
             <span class="tech-pill">Flask REST API</span>
             <span class="tech-pill">CUDA Accelerated</span>
-            <span class="tech-pill">1,166 Images Catalog</span>
         </div>
     </footer>
 
@@ -1212,18 +1124,7 @@
             }
         }
 
-        function selectPreset(deityName) {
-            // Preset info alert / helper
-            alert(`Preset chosen: ${deityName.toUpperCase()}. Upload a photo from your dataset or local files to run inference!`);
-        }
 
-        function openModal() {
-            document.getElementById('api-modal').style.display = 'flex';
-        }
-
-        function closeModal() {
-            document.getElementById('api-modal').style.display = 'none';
-        }
     </script>
 </body>
 </html>
