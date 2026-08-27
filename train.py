@@ -186,8 +186,6 @@ def main():
         "class_names": class_names,
     }, args.out)
 
-    with open(args.out + ".classes.json", "w") as f:
-        json.dump(class_names, f)
 
     print(f"\nBest val accuracy: {best_acc:.4f}")
     print(f"Saved model to {args.out}")
