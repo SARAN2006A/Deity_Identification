@@ -1,34 +1,57 @@
-# DeityVision AI — South Indian Sculpture Recognition & Iconography Engine
+# DeityVision AI — Full-Stack South Indian Sculpture Recognition & Temple Studio
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-ResNet50-EE4C2C.svg)](https://pytorch.org/)
 [![Flask](https://img.shields.io/badge/Flask-REST%20API-000000.svg)](https://flask.palletsprojects.com/)
+[![React](https://img.shields.io/badge/React-18-61DAFB.svg)](https://react.dev/)
+[![Vite](https://img.shields.io/badge/Vite-Bundler-646CFF.svg)](https://vitejs.dev/)
+[![SQLite](https://img.shields.io/badge/SQLite-Persistence-003B57.svg)](https://sqlite.org/)
 
-An enterprise-grade Deep Learning image classifier and interactive Web Application powered by PyTorch (ResNet50 transfer learning) and Flask. **DeityVision AI** accurately identifies South Indian temple deity sculptures across four major classes—**Amman**, **Murugan**, **Perumal**, and **Shivan**—providing detailed iconographic analysis, confidence scoring, and temple metadata.
-
----
-
-## 🌟 Key Features
-
-- **Transfer Learning Backbone**: Fine-tuned ResNet50 neural network architecture using PyTorch with a custom classification head (Dropout + Linear Layer).
-- **Class Imbalance Mitigation**: Computes inverse-frequency class weights dynamically to handle sample imbalances across classes.
-- **Glassmorphism Web Dashboard**: Modern, responsive single-page web app built with Vanilla CSS & JS, featuring drag-and-drop uploads, live sample previews, animated confidence breakdown bars, and iconographic metadata cards.
-- **Full REST API Suite**: Production-ready JSON API endpoints (`/api/predict`, `/api/health`, `/api/deities`, `/sample_image/<deity>`) for seamless frontend or mobile integration.
-- **Automated Dataset Scraper**: Includes a robust Wikimedia Commons scraper (`wikimedia_scraper.py`) with automatic exponential backoff retries and metadata manifest logging.
-- **Batch Dataset Importer**: CLI tool (`import_dataset.py`) for importing external local folders or single-deity datasets into the standardized training directory.
-- **Evaluation & Benchmarking Suite**: Generates complete confusion matrices, precision, recall, and top misclassification analysis (`evaluate.py`).
-- **Clean Model Packaging**: Native single-file PyTorch checkpoint saving both model weights and class mappings into `model.pt` without external redundant sidecar files.
+**DeityVision AI** is a production-grade Full-Stack Deep Learning application engineered for South Indian Hindu deity sculpture identification, sacred iconography analysis, and temple heritage intelligence. It combines a fine-tuned **PyTorch ResNet-50** neural backbone, a high-performance **Flask RESTful API** backend with **SQLite persistence**, and a **Luxury Heritage Temple Gold Studio** built with **React 18 & Vite**.
 
 ---
 
-## 🏛️ Supported Deity Classes & Iconography
+## 🏛️ Latest Updates & Interface Architecture
 
-| Deity Class | Traditional Iconography & Attributes | Famous Temples |
+### 1. Luxury Heritage / Temple Gold Studio Aesthetic
+- **Rich Obsidian & Molten Gold Palette**: Built on deep obsidian slate (`#080706` / `#0f0d0b`) with warm golden dust ambiance, golden chamfered borders (`#f59e0b` / `#fbbf24`), radiant ambient auras, and decorative corner filigree (`corner-tl`, `corner-tr`, etc.).
+- **Regal Typography**: Heading typography with Google Fonts [`Cinzel`](https://fonts.google.com/specimen/Cinzel), clean modern body readability with [`Plus Jakarta Sans`](https://fonts.google.com/specimen/Plus+Jakarta+Sans), and high-contrast monospace metrics with [`JetBrains Mono`](https://fonts.google.com/specimen/JetBrains+Mono).
+
+### 2. All-in-One Studio Dashboard
+- **Proper Header Layout**:
+  - **Left**: Royal temple emblem with `DEITYVISION` gold-gradient title and subtext *"SACRED ICONOGRAPHY & TEMPLE STUDIO"*.
+  - **Center**: Polished navigation pills (`🏛️ Temple Vault`, `📜 Iconography Shastras`, `⏱️ Scan Vault`, `📊 Telemetry`) with hover animations, borders, and active glow states.
+  - **Right**: Real-time neural engine telemetry indicator (`ResNet-50 Active` with an emerald pulse gem).
+  - Fully responsive flexbox design preventing button stacking and layout breaks.
+- **Focused Focal Dropzone (No Clutter / No Sample Images)**:
+  - Clean, dedicated sculpture dropzone supporting drag-and-drop file upload and live webcam snapshot capture.
+  - Removed sample benchmark images from the dashboard for a distraction-free, high-precision scanning workflow.
+  - **Contained Image Viewport**: Previews are strictly contained within a framed 380px viewport (`object-fit: contain`) with animated golden laser sweep reticle (`goldLaserScan`) to prevent image overflow.
+- **Integrated Divine Verdict Console**:
+  - **Deity Crown Header**: Canonical divine title, Tamil name, divine aspect badge, and glowing golden match gauge (e.g., `99.1%`).
+  - **Neural Confidence Spectrum**: Dynamic golden probability distribution bars across all 4 canonical deity classes.
+  - **Sacred Iconography Markers Shelf**: Ornate chips detailing distinguishing weapons (*Ayudhas*), crown styles (*Kirita*), mounts (*Vahanas*), and mudras.
+  - **Sacred Moola Mantra**: Dedicated recitation sanctum with a 1-click clipboard copy button.
+  - **Enshrined Sacred Abodes**: Quick pilgrimage cards directly opening temple dossiers.
+  - **Vault Actions**: Instant SQLite bookmarking and structured JSON report export.
+
+### 3. Side-by-Side Slideout Dossier Drawer (`StudioDrawer.jsx`)
+- Seamless side drawer that slides from the right without navigating away or losing scanner state:
+  - **🏛️ Temple Vault**: Search and filter South Indian shrines (Brihadisvara, Meenakshi, Palani Murugan, Srirangam, Chidambaram, Tirumala) with UNESCO badges and architectural highlights.
+  - **📜 Iconography Shastras**: Comprehensive guides on weapons, postures, and AI distinguishing contours for each deity tradition.
+  - **⏱️ Scan Vault**: Archive of past neural scans with bookmarking, timestamps, and deletion.
+  - **📊 Telemetry**: Real-time inference stats, average accuracy, and ResNet-50 architecture specifications.
+
+---
+
+## 🏛️ Supported Deity Classes & Canonical Iconography
+
+| Deity Class | Traditional Iconography & Attributes | Enshrined Famous Temples |
 | :--- | :--- | :--- |
-| **Goddess Amman** *(Shakti / Parvati)* | Trishula (trident), Kirita-mukuta crown, lotus flower, divine feminine ornaments, seated or standing posture. | Madurai Meenakshi, Samayapuram Mariamman, Kanchipuram Kamakshi |
-| **Lord Murugan** *(Kartikeya / Skanda)* | Vel (sacred spear), Peacock mount (Mayil), youthful posture (Kumara), rooster pennant. | Palani Murugan, Tiruchendur Murugan, Swamimalai |
-| **Lord Perumal** *(Vishnu / Ranganatha)* | Shankha (conch), Chakra (discus), Namam forehead mark, regal four-armed standing or reclining posture. | Srirangam Ranganathaswamy, Tirumala Venkateswara, Kanchipuram Varadharaja |
-| **Lord Shiva** *(Nataraja / Lingam)* | Trishula & Damaru drum, Jata (matted hair locks), crescent moon, third eye, Lingam form or Nataraja cosmic dance posture. | Chidambaram Nataraja, Thanjavur Brihadisvara, Tiruvannamalai Annamalaiyar |
+| **Lord Shiva** *(Nataraja / Lingam / Mahadeva)* | Trishula & Damaru drum, Jatamukuta (matted locks), crescent moon, third eye, Lingam or Nataraja cosmic dance posture. | Chidambaram Nataraja, Thanjavur Brihadisvara, Tiruvannamalai Annamalaiyar |
+| **Lord Murugan** *(Kartikeya / Skanda / Shanmukha)* | Vel (sacred golden spear), Peacock mount (Mayil), youthful posture (Kumara), rooster pennant (Seval Kodi). | Palani Murugan, Tiruchendur Murugan, Swamimalai |
+| **Lord Perumal** *(Vishnu / Ranganatha / Venkateswara)* | Shankha (conch), Chakra (discus), Namam forehead mark, regal four-armed standing or reclining posture. | Srirangam Ranganathaswamy, Tirumala Venkateswara, Kanchipuram Varadharaja |
+| **Goddess Amman** *(Shakti / Parvati / Mariamman)* | Trishula (trident), Kirita-mukuta crown, lotus flower, divine feminine ornaments, seated or standing posture. | Madurai Meenakshi, Samayapuram Mariamman, Kanchipuram Kamakshi |
 
 ---
 
@@ -36,210 +59,101 @@ An enterprise-grade Deep Learning image classifier and interactive Web Applicati
 
 ```
 deity/
-├── app.py                   # Main Flask web application & REST API server
-├── train.py                 # ResNet50 transfer learning training pipeline
-├── evaluate.py              # Confusion matrix & precision/recall evaluation suite
-├── predict.py               # Standalone single-image CLI inference tool
-├── import_dataset.py        # External dataset importer tool
-├── wikimedia_scraper.py     # Wikimedia Commons search & image scraper
-├── model.pt                 # Trained PyTorch ResNet50 model checkpoint
-├── requirements.txt         # Project dependency specification
-├── README.md                # Project documentation
-├── templates/
-│   └── index.html           # Modern Glassmorphism Web App frontend
-└── deity_dataset/           # Training image dataset directory
-    ├── amman/               # Amman sculpture photos (~402 images)
-    ├── murugan/             # Murugan sculpture photos (~178 images)
-    ├── perumal/             # Perumal sculpture photos (~208 images)
-    ├── shivan/              # Shivan sculpture photos (~378 images)
-    └── manifest.json        # Image source & license tracking manifest
+├── app.py                         # Flask REST API server & production static router
+├── db.py                          # SQLite database persistence layer (scans, bookmarks, stats)
+├── temple_data.py                 # Comprehensive iconography encyclopedia & temple directory
+├── model.pt                       # Fine-tuned PyTorch ResNet-50 checkpoint (~94 MB)
+├── deity_app.db                   # SQLite database file (created automatically)
+├── requirements.txt               # Python dependencies
+├── train.py                       # ResNet-50 transfer learning training pipeline
+├── evaluate.py                    # Confusion matrix & benchmark evaluation suite
+├── predict.py                     # Standalone CLI image inference tool
+├── wikimedia_scraper.py           # Wikimedia Commons image scraper with rate-limiting
+├── deity_dataset/                 # Training dataset categorized by deity class
+│   ├── amman/
+│   ├── murugan/
+│   ├── perumal/
+│   └── shivan/
+└── frontend/                      # Modern React + Vite SPA
+    ├── package.json
+    ├── vite.config.js             # Reverse proxy configuration
+    ├── index.html                 # Google Fonts & SEO tags
+    ├── dist/                      # Compiled production build artifacts
+    └── src/
+        ├── main.jsx               # Application entrypoint & stylesheet linkage
+        ├── App.jsx                # Root container & drawer state management
+        ├── index.css              # Luxury Temple Gold design system & layout styling
+        └── components/
+            ├── StudioHeader.jsx   # Top studio bar with brand & navigation pills
+            ├── StudioMainStage.jsx# Focal dropzone, laser reticle & verdict console
+            └── StudioDrawer.jsx   # Slide-out drawer (Temples, Shastras, Vault, Telemetry)
 ```
 
 ---
 
-## 🚀 Quick Start & Setup
+## 📡 REST API Reference
 
-### 1. Prerequisites & Virtual Environment
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/health` | Returns backend status, device (CPU/CUDA), and loaded model classes. |
+| `POST` | `/api/predict` | Accepts multipart `file` or JSON `image_b64`. Returns prediction breakdown, iconographic markers, recommended temples, and stores record in SQLite. |
+| `GET` | `/api/history` | Fetches scan history with optional `?deity=` and `?bookmarked=true` filters. |
+| `POST` | `/api/history/<id>/bookmark` | Toggles bookmark status for a scan record. |
+| `DELETE` | `/api/history/<id>` | Deletes a past scan record from SQLite. |
+| `GET` | `/api/stats` | Returns aggregate statistics (total scans, average confidence, distribution). |
+| `GET` | `/api/temples` | Returns curated Dravidian temple directory with search & deity filters. |
+| `GET` | `/api/deities` | Comprehensive iconography encyclopedia metadata. |
+| `GET` | `/api/samples` | Curated sample images from the local dataset for API testing. |
+| `GET` | `/sample_image/<deity>/<filename>` | Serves high-resolution sample sculpture photos. |
 
-Ensure Python 3.10+ is installed on your system.
+---
 
-```bash
-# Clone or navigate to project directory
-cd deity
+## 🚀 Quick Start & Running Locally
 
-# Create and activate a virtual environment (optional but recommended)
-python -m venv .venv
+### 1. Run the Full-Stack Application (Flask + Built React)
 
-# On Windows (PowerShell):
-.venv\Scripts\Activate.ps1
+The backend directly serves both the REST API and the production React frontend from `frontend/dist`:
 
-# On Linux/macOS:
-source .venv/bin/activate
-```
+```powershell
+# Activate Python environment
+.\.venv\Scripts\activate
 
-### 2. Install Dependencies
-
-Install PyTorch, Torchvision, Flask, Pillow, and Requests:
-
-```bash
+# Install dependencies (if needed)
 pip install -r requirements.txt
-```
 
----
-
-## 🌐 Running the Web Application & REST API
-
-### Start the Flask Server
-
-Run `app.py` to start the web application:
-
-```bash
+# Start the Full-Stack Server
 python app.py
 ```
+> The application will be accessible at **http://127.0.0.1:5000**.
 
-The app will launch at **`http://127.0.0.1:5000`**.
+### 2. Frontend Development Server (Optional for Live Editing)
 
-### REST API Usage
+For live Hot Module Replacement (HMR) during frontend UI development:
 
-#### 1. Health Check
-```http
-GET /api/health
+```powershell
+cd frontend
+npm install
+npm run dev
 ```
-**Response:**
-```json
-{
-  "backend": "Flask REST API",
-  "classes": ["amman", "murugan", "perumal", "shivan"],
-  "device": "cuda",
-  "model_loaded": true,
-  "status": "online"
-}
-```
+> The Vite dev server will run at **http://localhost:5173** and automatically proxy API calls to port 5000.
 
-#### 2. Get Deity Metadata
-```http
-GET /api/deities
-```
-Returns comprehensive iconographic descriptions, key features, and famous temples for all supported deity classes.
+### 3. Rebuilding the Frontend Bundle
 
-#### 3. Image Prediction API Endpoint
-Send a `POST` request with a multipart image file:
-```bash
-curl -X POST -F "file=@path/to/sculpture.jpg" http://127.0.0.1:5000/api/predict
-```
+Whenever changes are made to the frontend React components or CSS:
 
-**Response Example:**
-```json
-{
-  "best_confidence": 98.45,
-  "best_guess": "murugan",
-  "best_metadata": {
-    "description": "Divine warrior & commander of celestial forces...",
-    "famous_temples": ["Palani Murugan Temple", "Tiruchendur Murugan Temple"],
-    "key_features": ["Vel (Sacred Spear)", "Peacock Mount (Mayil)", "Youthful Form (Kumara)"],
-    "title": "Lord Murugan / Kartikeya / Skanda"
-  },
-  "predictions": [
-    { "class": "murugan", "confidence": 98.45, "details": { ... } },
-    { "class": "shivan", "confidence": 1.20, "details": { ... } },
-    { "class": "amman", "confidence": 0.25, "details": { ... } },
-    { "class": "perumal", "confidence": 0.10, "details": { ... } }
-  ],
-  "success": true
-}
+```powershell
+cd frontend
+npm run build
 ```
+> Recompiles into `frontend/dist`, instantly ready to be served by `app.py`.
 
 ---
 
-## 🏋️ Model Training & Evaluation
-
-### 1. Training the Model (`train.py`)
-
-Train the ResNet50 transfer learning model using custom dataset directories:
-
-```bash
-python train.py --data_dir deity_dataset --epochs 15 --batch_size 16 --out model.pt
-```
-
-**Key Command Arguments:**
-- `--data_dir`: Directory containing subfolders per deity class (default: `deity_dataset`).
-- `--epochs`: Number of training epochs (default: `15`).
-- `--batch_size`: Batch size for training & validation (default: `16`).
-- `--lr`: Initial learning rate for classification head (default: `1e-3`).
-- `--unfreeze_after`: Epoch at which backbone layers unfreeze for fine-tuning (default: `5`).
-- `--out`: Destination file for saving PyTorch checkpoint (default: `model.pt`).
-
-### 2. Evaluating Model Performance (`evaluate.py`)
-
-Generate a confusion matrix, per-class precision, recall, and top misclassification analysis:
-
-```bash
-python evaluate.py --model model.pt --data_dir deity_dataset
-```
-
-### 3. Single Image CLI Prediction (`predict.py`)
-
-Perform quick single-image inference directly from your command line:
-
-```bash
-python predict.py --model model.pt --image path/to/photo.jpg
-```
+## 💡 Troubleshooting & Notes
+- **Browser Cache Clearing**: If you notice old styles or buttons in your browser, perform a hard refresh using `Ctrl + Shift + R` or `Ctrl + F5` to reload the latest CSS bundle.
+- **Webcam Permissions**: Ensure your browser has granted camera access permissions if using the live snapshot feature.
 
 ---
 
-## 📊 Benchmark & Evaluation Results
-
-Tested on **1,166 total images** across the four deity classes:
-
-### Confusion Matrix
-```
-                  predicted ->
-                 amman  murugan  perumal   shivan
-true amman       61        0        2        1
-true murugan        8       24        0        1
-true perumal        1        0       30        1
-true shivan        5        2        0       63
-```
-
-### Per-Class Metrics (~89.45% Overall Validation Accuracy)
-
-| Deity Class | Precision | Recall | Sample Size (n) |
-| :--- | :---: | :---: | :---: |
-| **Amman** | **0.81** | **0.95** | 64 |
-| **Murugan** | **0.92** | **0.73** | 33 |
-| **Perumal** | **0.94** | **0.94** | 32 |
-| **Shivan** | **0.95** | **0.90** | 70 |
-
----
-
-## 🛠️ Dataset Management & Tools
-
-### Scrape Images from Wikimedia Commons (`wikimedia_scraper.py`)
-Automatically query Wikimedia Commons API for sculpture photos across all deity categories:
-
-```bash
-# Scrape all deity categories:
-python wikimedia_scraper.py
-
-# Scrape specific deity categories:
-python wikimedia_scraper.py murugan perumal
-```
-Features exponential backoff rate limiting, user-agent compliance, and manifest tracking in `deity_dataset/manifest.json`.
-
-### Batch Import External Folders (`import_dataset.py`)
-Import external images or structured image subfolders directly into `deity_dataset/`:
-
-```bash
-# Import a folder with deity subfolders:
-python import_dataset.py "C:\path\to\my_dataset"
-
-# Import images for a single deity class:
-python import_dataset.py "C:\path\to\ganesha_photos" --class_name ganesha
-```
-
----
-
-## 🧹 Maintenance & Optimizations
-
-- **Streamlined Checkpointing**: Class names are stored directly inside [`model.pt`](file:///c:/Users/saran/Documents/deity/model.pt). Redundant external sidecar files (`model.pt.classes.json`) have been cleaned up and disabled in [`train.py`](file:///c:/Users/saran/Documents/deity/train.py#L184-L188).
-- **Clean Execution**: Automated `.gitignore` rules prevent bytecode (`__pycache__`) and local virtual environments (`.venv/`) from clogging repository commits.
+## 📜 License
+Academic and Research Use. Temple imagery adheres to respective Creative Commons and public domain source declarations.

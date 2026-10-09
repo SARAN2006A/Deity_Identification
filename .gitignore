@@ -14,6 +14,7 @@ model.pt.classes.json
 *.pt
 *.pth
 *.onnx
+*.db
 
 # OS & IDE metadata
 .DS_Store
