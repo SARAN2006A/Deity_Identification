@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
@@ -11,7 +11,9 @@ import {
   Menu,
   X,
   Shield,
-  ChevronDown
+  ChevronDown,
+  Sun,
+  Moon
 } from 'lucide-react';
 
 export default function Navbar({ onOpenDrawer, apiStatus }) {
@@ -20,6 +22,15 @@ export default function Navbar({ onOpenDrawer, apiStatus }) {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(true);
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.body.classList.remove('light-theme');
+    } else {
+      document.body.classList.add('light-theme');
+    }
+  }, [isDarkMode]);
 
   const handleNavClick = (path, drawerName = null) => {
     setMobileMenuOpen(false);
@@ -42,6 +53,7 @@ export default function Navbar({ onOpenDrawer, apiStatus }) {
 
   const isScannerActive = location.pathname === '/scanner';
   const isHomeActive = location.pathname === '/';
+  const isAboutActive = location.pathname === '/about';
 
   return (
     <header className="studio-header">
@@ -63,43 +75,55 @@ export default function Navbar({ onOpenDrawer, apiStatus }) {
           Home
         </button>
 
-        <button
-          className={`studio-nav-btn ${isScannerActive ? 'active' : ''}`}
-          onClick={() => handleNavClick('/scanner')}
-        >
-          <Camera size={15} /> AI Scanner
-        </button>
+        {isAuthenticated && (
+          <>
+            <button
+              className={`studio-nav-btn ${isScannerActive ? 'active' : ''}`}
+              onClick={() => handleNavClick('/scanner')}
+            >
+              <Camera size={15} /> AI Scanner
+            </button>
+
+            <button
+              className="studio-nav-btn"
+              onClick={() => handleNavClick('/scanner', 'temples')}
+            >
+              <Landmark size={15} /> Temple Vault
+            </button>
+
+            <button
+              className="studio-nav-btn"
+              onClick={() => handleNavClick('/scanner', 'shastras')}
+            >
+              <BookOpen size={15} /> Shilpa Shastras
+            </button>
+          </>
+        )}
 
         <button
-          className="studio-nav-btn"
-          onClick={() => handleNavClick('/scanner', 'temples')}
-        >
-          <Landmark size={15} /> Temple Vault
-        </button>
-
-        <button
-          className="studio-nav-btn"
-          onClick={() => handleNavClick('/scanner', 'shastras')}
-        >
-          <BookOpen size={15} /> Shilpa Shastras
-        </button>
-
-        <a
-          href="#about"
-          className="studio-nav-btn"
-          onClick={(e) => {
-            if (location.pathname !== '/') {
-              e.preventDefault();
-              navigate('/#about');
-            }
-          }}
+          className={`studio-nav-btn ${isAboutActive ? 'active' : ''}`}
+          onClick={() => handleNavClick('/about')}
         >
           About
-        </a>
+        </button>
       </nav>
 
       {/* Auth Actions & Telemetry Badge */}
       <div className="header-right-actions">
+        {/* Theme Toggle */}
+        <button
+          className="theme-toggle-btn"
+          onClick={() => setIsDarkMode(!isDarkMode)}
+          title="Toggle Light/Dark Mode"
+          style={{
+            background: 'transparent', border: 'none', cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            color: 'var(--gold-400)', padding: '0.4rem', borderRadius: '50%'
+          }}
+        >
+          {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+        </button>
+
         {/* Status Telemetry */}
         <div className="studio-telemetry" title={apiStatus ? 'Model Online' : 'Connecting to AI Engine'}>
           <span className="gem-pulse" style={{ background: apiStatus ? '#22C55E' : '#EAB308' }}></span>
@@ -182,14 +206,21 @@ export default function Navbar({ onOpenDrawer, apiStatus }) {
               <button className="mobile-nav-item" onClick={() => handleNavClick('/')}>
                 Home
               </button>
-              <button className="mobile-nav-item" onClick={() => handleNavClick('/scanner')}>
-                <Camera size={16} /> AI Scanner
-              </button>
-              <button className="mobile-nav-item" onClick={() => handleNavClick('/scanner', 'temples')}>
-                <Landmark size={16} /> Temple Vault
-              </button>
-              <button className="mobile-nav-item" onClick={() => handleNavClick('/scanner', 'shastras')}>
-                <BookOpen size={16} /> Iconography & Shilpa Shastras
+              {isAuthenticated && (
+                <>
+                  <button className="mobile-nav-item" onClick={() => handleNavClick('/scanner')}>
+                    <Camera size={16} /> AI Scanner
+                  </button>
+                  <button className="mobile-nav-item" onClick={() => handleNavClick('/scanner', 'temples')}>
+                    <Landmark size={16} /> Temple Vault
+                  </button>
+                  <button className="mobile-nav-item" onClick={() => handleNavClick('/scanner', 'shastras')}>
+                    <BookOpen size={16} /> Iconography & Shilpa Shastras
+                  </button>
+                </>
+              )}
+              <button className="mobile-nav-item" onClick={() => handleNavClick('/about')}>
+                About
               </button>
 
               <div style={{ height: '1px', background: 'var(--border-gold-subtle)', margin: '0.8rem 0' }}></div>

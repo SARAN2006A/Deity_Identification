@@ -5,6 +5,7 @@ import Navbar from './components/Navbar';
 import LandingPage from './components/LandingPage';
 import LoginPage from './components/LoginPage';
 import SignupPage from './components/SignupPage';
+import AboutPage from './components/AboutPage';
 import StudioMainStage from './components/StudioMainStage';
 import StudioDrawer from './components/StudioDrawer';
 
@@ -12,6 +13,7 @@ function AppContent() {
   const [activeDrawer, setActiveDrawer] = useState(null);
   const [apiStatus, setApiStatus] = useState(false);
   const location = useLocation();
+  const { isAuthenticated } = useAuth();
 
   // Poll backend health status
   useEffect(() => {
@@ -34,17 +36,21 @@ function AppContent() {
   };
 
   const isAuthPage = location.pathname === '/login' || location.pathname === '/signup';
+  // Public pages manage their own header
+  const isPublicPage = ['/', '/login', '/signup', '/about'].includes(location.pathname);
 
   return (
     <div className="studio-container">
-      {/* Navigation Header */}
-      <Navbar
-        onOpenDrawer={setActiveDrawer}
-        apiStatus={apiStatus}
-      />
+      {/* Navigation Header — only shown in the authenticated app */}
+      {!isPublicPage && (
+        <Navbar
+          onOpenDrawer={setActiveDrawer}
+          apiStatus={apiStatus}
+        />
+      )}
 
-      {/* Main Page Routing Stage */}
-      <main className="studio-stage">
+      {/* Main Page Routing Stage — no padding on public pages */}
+      <main className={isPublicPage ? '' : 'studio-stage'}>
         <Routes>
           <Route
             path="/"
@@ -59,11 +65,19 @@ function AppContent() {
             element={<SignupPage />}
           />
           <Route
+            path="/about"
+            element={<AboutPage />}
+          />
+          <Route
             path="/scanner"
             element={
-              <StudioMainStage
-                onOpenTempleDossier={handleOpenTempleDossier}
-              />
+              isAuthenticated ? (
+                <StudioMainStage
+                  onOpenTempleDossier={handleOpenTempleDossier}
+                />
+              ) : (
+                <Navigate to="/login?redirect=/scanner" replace />
+              )
             }
           />
           <Route

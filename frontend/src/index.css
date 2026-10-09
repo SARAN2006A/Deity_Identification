@@ -459,6 +459,65 @@ h1, h2, h3, h4, .serif-heading {
 .auth-btn-group { display: flex; align-items: center; gap: 0.6rem; }
 .auth-link-btn { text-decoration: none; padding: 0.5rem 1.1rem; font-size: 0.84rem; }
 
+/* LANDING PAGE DEDICATED NAVBAR */
+.landing-navbar {
+  position: sticky; top: 0; z-index: 80;
+  background: rgba(7,26,43,0.95);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-gold-medium);
+  padding: 0.85rem 2.2rem;
+  display: flex; align-items: center; justify-content: space-between; gap: 1.5rem;
+  box-shadow: 0 6px 30px rgba(0,0,0,0.55);
+}
+.landing-nav-right {
+  display: flex; align-items: center; gap: 0.75rem;
+}
+
+/* HERO FEATURE PILLS */
+.hero-feature-pills {
+  display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 1.5rem;
+}
+.feature-pill {
+  background: rgba(244,185,66,0.1); border: 1px solid var(--border-gold-subtle);
+  color: var(--gold-300); font-size: 0.78rem; font-weight: 700;
+  padding: 0.3rem 0.85rem; border-radius: var(--radius-full);
+  letter-spacing: 0.04em;
+}
+
+/* FEATURE STRIP */
+.landing-feature-strip {
+  background: rgba(13,38,56,0.90);
+  border-top: 1px solid var(--border-gold-subtle);
+  border-bottom: 1px solid var(--border-gold-subtle);
+  padding: 2rem 2.2rem;
+}
+.feature-strip-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap;
+  justify-content: center;
+}
+.strip-card {
+  display: flex; align-items: center; gap: 1rem; flex: 1; min-width: 200px;
+}
+.strip-icon { font-size: 2rem; flex-shrink: 0; }
+.strip-title { font-weight: 800; color: var(--text-primary); font-size: 0.95rem; margin-bottom: 0.2rem; }
+.strip-desc { font-size: 0.78rem; color: var(--text-muted); line-height: 1.4; }
+.strip-divider { width: 1px; height: 50px; background: var(--border-gold-subtle); flex-shrink: 0; }
+@media (max-width: 860px) { .strip-divider { display: none; } .strip-card { min-width: 160px; } }
+
+/* LANDING FINAL CTA */
+.landing-final-cta {
+  padding: 4rem 2rem; background: radial-gradient(circle at 50% 50%, rgba(244,185,66,0.08) 0%, transparent 70%);
+}
+.landing-final-cta-card {
+  max-width: 720px; margin: 0 auto;
+  background: rgba(13,38,56,0.95); border: 1px solid var(--border-gold-medium);
+  border-radius: var(--radius-lg); padding: 3.5rem 2.5rem;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.7);
+}
+
+
+
 /* User profile avatar badge */
 .user-avatar-circle {
   width: 26px; height: 26px; border-radius: 50%;
@@ -755,4 +814,65 @@ h1, h2, h3, h4, .serif-heading {
 .auth-card-footer { margin-top: 1.8rem; padding-top: 1.2rem; border-top: 1px solid var(--border-gold-subtle); font-size: 0.86rem; color: var(--text-muted); }
 .auth-switch-link { color: var(--gold-300); font-weight: 700; text-decoration: none; margin-left: 0.3rem; }
 .auth-switch-link:hover { text-decoration: underline; }
+
+/* ================= LIGHT THEME OVERRIDES ================= */
+body.light-theme {
+  --navy-950: #F0F4F8;
+  --navy-900: #E2E8F0;
+  --navy-850: #CBD5E1;
+  --navy-800: #94A3B8;
+  --navy-750: #64748B;
+  --navy-700: #475569;
+
+  --text-primary:   #0F172A;
+  --text-secondary: #334155;
+  --text-muted:     #475569;
+  --text-dim:       #64748B;
+  
+  --border-gold-subtle: rgba(176, 120, 32, 0.25);
+  --border-gold-medium: rgba(176, 120, 32, 0.45);
+  --border-gold-bright: rgba(176, 120, 32, 0.75);
+
+  --gold-300: #D4952A;
+  --gold-400: #B07820;
+
+  background-image: 
+    radial-gradient(circle at 50% -8%, rgba(176, 120, 32, 0.08) 0%, transparent 55%),
+    radial-gradient(circle at 10% 45%, rgba(226, 232, 240, 0.6) 0%, transparent 50%),
+    radial-gradient(circle at 90% 75%, rgba(176, 120, 32, 0.05) 0%, transparent 50%),
+    linear-gradient(180deg, #F0F4F8 0%, #E2E8F0 50%, #F0F4F8 100%);
+}
+
+body.light-theme .studio-header {
+  background: rgba(240, 244, 248, 0.95);
+}
+
+body.light-theme .btn-obsidian-outline,
+body.light-theme .studio-nav-pills,
+body.light-theme .studio-telemetry {
+  background: rgba(226, 232, 240, 0.65);
+  color: var(--text-primary);
+}
+
+body.light-theme .studio-telemetry {
+  color: var(--gold-400);
+}
+
+body.light-theme .studio-nav-btn {
+  color: var(--text-secondary);
+}
+
+body.light-theme .hero-main-title,
+body.light-theme .section-title,
+body.light-theme .feature-card-title,
+body.light-theme .step-title,
+body.light-theme .temple-card-title,
+body.light-theme .final-cta-heading,
+body.light-theme .deity-en-title {
+  color: var(--text-primary);
+}
+
+body.light-theme .theme-toggle-btn:hover {
+  background: rgba(176, 120, 32, 0.1) !important;
+}
 
