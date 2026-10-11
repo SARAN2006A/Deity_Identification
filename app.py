@@ -603,6 +603,19 @@ def get_analytics():
         "stats": stats
     })
 
+# Serve Local Temple Images
+@app.route("/temples/<path:filename>")
+@app.route("/static/temples/<path:filename>")
+def serve_temple_image(filename):
+    for d in [
+        os.path.join(app.root_path, "static", "temples"),
+        os.path.join(app.root_path, "frontend", "public", "temples"),
+        os.path.join(app.root_path, "frontend", "dist", "temples"),
+    ]:
+        if os.path.exists(os.path.join(d, filename)):
+            return send_from_directory(d, filename)
+    return jsonify({"error": "Temple image not found"}), 404
+
 # Serve Frontend if built or provide fallback
 @app.route("/", defaults={"path": ""})
 @app.route("/<path:path>")

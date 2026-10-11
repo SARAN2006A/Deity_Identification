@@ -124,7 +124,8 @@ export default function TempleExplorerView({ defaultFilter = 'all', onSelectDeit
                   alt={temple.name}
                   className="temple-card-img"
                   onError={(e) => {
-                    e.target.src = 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=1000&q=80';
+                    e.target.onerror = null;
+                    e.target.src = '/temples/thanjavur_brihadisvara.jpg';
                   }}
                 />
                 <div className="temple-badge-float">

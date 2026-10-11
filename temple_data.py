@@ -177,7 +177,7 @@ TEMPLES_DIRECTORY = [
         "dynasty": "Chola Dynasty (Built by Rajaraja Chola I, 1010 CE)",
         "unesco": True,
         "highlights": "Magnificent 216-foot Vimana made entirely of granite, massive 80-tonne single granite capstone, monolithic Nandi statue.",
-        "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Brihadisvara_Temple_Thanjavur.jpg/800px-Brihadisvara_Temple_Thanjavur.jpg",
+        "image_url": "/temples/thanjavur_brihadisvara.jpg",
         "significance": "Great Living Chola Temple celebrated for Dravidian architectural perfection and monumental inscriptions."
     },
     {
@@ -190,7 +190,7 @@ TEMPLES_DIRECTORY = [
         "dynasty": "Pandya & Nayakar Dynasties (Reconstructed 14th-17th Century)",
         "unesco": False,
         "highlights": "14 monumental gopurams reaching up to 170 feet covered in thousands of vibrant sculptures, Hall of Thousand Pillars, Golden Lotus Pond.",
-        "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Madurai_Meenakshi_Amman_Temple_Gopuram.jpg/800px-Madurai_Meenakshi_Amman_Temple_Gopuram.jpg",
+        "image_url": "/temples/madurai_meenakshi.jpg",
         "significance": "Spiritual epicentre of Southern Tamil Nadu; dedicated to Goddess Meenakshi who rules Madurai as sovereign queen."
     },
     {
@@ -203,7 +203,7 @@ TEMPLES_DIRECTORY = [
         "dynasty": "Chera Kings & Ancient Siddha Tradition (Consecrated by Sage Bhogar)",
         "unesco": False,
         "highlights": "Main idol sculpted from Navapashanam (nine secret medicinal alchemy minerals) by Siddha Bhogar, hill-top shrine accessed via 693 stone steps and rope car.",
-        "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Palani_Murugan_temple_hill.jpg/800px-Palani_Murugan_temple_hill.jpg",
+        "image_url": "/temples/palani_murugan.jpg",
         "significance": "Third of the sacred Arupadai Veedu (Six Holy Abodes of Murugan); renowned worldwide for panchamirtham prasad."
     },
     {
@@ -216,7 +216,7 @@ TEMPLES_DIRECTORY = [
         "dynasty": "Chola, Pandya, Hoysala, and Vijayanagara Dynasties",
         "unesco": False,
         "highlights": "Largest functioning Hindu temple complex in the world (156 acres), 7 concentric prakaras (enclosures), 21 majestic gopurams including the 236-ft Rajagopuram.",
-        "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Rajagopuram_of_Srirangam_Temple.jpg/800px-Rajagopuram_of_Srirangam_Temple.jpg",
+        "image_url": "/temples/srirangam_ranganatha.jpg",
         "significance": "Foremost of the 108 Divya Desams (sacred Vaishnavite shrines); primary seat of Sri Vaishnava sampradaya."
     },
     {
@@ -229,7 +229,7 @@ TEMPLES_DIRECTORY = [
         "dynasty": "Pallava, Chola, and Pandya Dynasties (6th-13th Century)",
         "unesco": False,
         "highlights": "Golden Roofed Chit Sabha, 108 Karanas (sculpted poses of classical Bharatanatyam) on gopuram gateways, Chidambara Rahasyam (cosmic space form).",
-        "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Chidambaram_Nataraja_temple_Gopuram.jpg/800px-Chidambaram_Nataraja_temple_Gopuram.jpg",
+        "image_url": "/temples/chidambaram_nataraja.jpg",
         "significance": "Represents the Sky (Akasha) element among the Pancha Bhoota Sthalams; home of the immortal cosmic dance."
     },
     {
@@ -242,7 +242,7 @@ TEMPLES_DIRECTORY = [
         "dynasty": "Early Pandya Dynasty & Tirumalai Nayak",
         "unesco": False,
         "highlights": "Spectacular seaside temple located right on the shoreline of the Gulf of Mannar; 9-tier 137-foot Raja Gopuram facing the sea.",
-        "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Tiruchendur_temple_view.jpg/800px-Tiruchendur_temple_view.jpg",
+        "image_url": "/temples/tiruchendur_murugan.jpg",
         "significance": "Second of the Arupadai Veedu; place where Lord Murugan vanquished the asura Surapadman with his divine Vel."
     },
     {
@@ -255,7 +255,7 @@ TEMPLES_DIRECTORY = [
         "dynasty": "Pallava Dynasty (6th Century) and restored by Adi Shankaracharya",
         "unesco": False,
         "highlights": "Golden Shikhara above the sanctum, Sri Chakra Yantra established by Adi Shankara, seated Padmasana form holding sugarcane bow and flower arrows.",
-        "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Kamakshi_Amman_Temple_Golden_Gopuram.jpg/800px-Kamakshi_Amman_Temple_Golden_Gopuram.jpg",
+        "image_url": "/temples/kanchipuram_kamakshi.jpg",
         "significance": "One of the 51 Shakti Peethas (Nabhi Kshetra) and the primary Shakta shrine of South India."
     },
     {
@@ -268,7 +268,8 @@ TEMPLES_DIRECTORY = [
         "dynasty": "Pallava, Chola, Vijayanagara (Sri Krishnadevaraya patron)",
         "unesco": False,
         "highlights": "Ananda Nilayam golden vimana, self-manifested (Swayambhu) deity idol adorned with Navaratnas, world's most visited religious pilgrimage.",
-        "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Tirumala_090615.jpg/800px-Tirumala_090615.jpg",
+        "image_url": "/temples/tirumala_venkateswara.jpg",
         "significance": "Kaliyuga Vaikuntam where Lord Vishnu descended to grant boons and liberate humanity."
     }
 ]
+

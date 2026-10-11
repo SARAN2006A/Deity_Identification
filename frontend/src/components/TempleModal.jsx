@@ -17,7 +17,8 @@ export default function TempleModal({ temple, onClose, onSelectDeity }) {
             alt={temple.name}
             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             onError={(e) => {
-              e.target.src = 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=1000&q=80';
+              e.target.onerror = null;
+              e.target.src = '/temples/thanjavur_brihadisvara.jpg';
             }}
           />
           {temple.unesco && (

@@ -177,7 +177,15 @@ export default function StudioDrawer({ activeDrawer, onClose, onSelectDeityForSc
                           alt={temple.name}
                           style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                           onError={(e) => {
-                            e.target.src = 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=1000&q=80';
+                            // Local deity temple fallbacks so images never show wrong external photos
+                            const fallbacks = {
+                              shivan:  '/temples/thanjavur_brihadisvara.jpg',
+                              amman:   '/temples/madurai_meenakshi.jpg',
+                              murugan: '/temples/palani_murugan.jpg',
+                              perumal: '/temples/srirangam_ranganatha.jpg',
+                            };
+                            e.target.onerror = null; // prevent infinite loop
+                            e.target.src = fallbacks[temple.deity] || '/temples/thanjavur_brihadisvara.jpg';
                           }}
                         />
                         {temple.unesco && (
