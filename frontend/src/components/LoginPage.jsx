@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { Lock, Mail, Eye, EyeOff, ShieldCheck, ArrowRight, Sparkles, AlertCircle } from 'lucide-react';
 
 export default function LoginPage() {
-  const { login } = useAuth();
+  const { login, demoLogin } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -19,6 +19,19 @@ export default function LoginPage() {
   // Get redirect target from query parameter if present
   const searchParams = new URLSearchParams(location.search);
   const redirectTarget = searchParams.get('redirect') || '/scanner';
+
+  const handleQuickDemoLogin = async () => {
+    setError('');
+    setIsSubmitting(true);
+    try {
+      await demoLogin();
+      navigate(redirectTarget);
+    } catch (err) {
+      setError(err.message || 'Failed to activate demo mode.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -83,6 +96,38 @@ export default function LoginPage() {
             <span>Password reset link sent! Check your inbox or contact support.</span>
           </div>
         )}
+
+        {/* Quick Demo Access Card for Viva / Final Demonstration */}
+        <div style={{
+          marginBottom: '1.4rem',
+          padding: '1rem',
+          background: 'rgba(244, 185, 66, 0.08)',
+          border: '1px solid var(--border-gold-medium)',
+          borderRadius: '10px',
+          textAlign: 'center'
+        }}>
+          <div style={{ fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--gold-300)', letterSpacing: '0.06em', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}>
+            <Sparkles size={14} /> Final Demonstration Access
+          </div>
+          <button
+            type="button"
+            className="btn-gold-royal"
+            style={{ width: '100%', padding: '0.65rem 1rem', fontSize: '0.88rem' }}
+            disabled={isSubmitting}
+            onClick={handleQuickDemoLogin}
+          >
+            Instant 1-Click Reviewer Login
+          </button>
+          <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '0.45rem' }}>
+            Instantly enters AI studio with preloaded evaluation session
+          </div>
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '1.4rem', color: 'var(--text-muted)', fontSize: '0.74rem' }}>
+          <div style={{ flex: 1, height: '1px', background: 'var(--border-gold-subtle)' }}></div>
+          <span>OR SIGN IN MANUALLY</span>
+          <div style={{ flex: 1, height: '1px', background: 'var(--border-gold-subtle)' }}></div>
+        </div>
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="auth-form">

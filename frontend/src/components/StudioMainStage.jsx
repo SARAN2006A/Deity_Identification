@@ -41,7 +41,7 @@ export default function StudioMainStage({ onOpenTempleDossier }) {
 
   // Load sample gallery for quick 1-click interactive testing
   useEffect(() => {
-    fetch('/api/samples')
+    fetch('/api/samples', { credentials: 'include' })
       .then((res) => res.json())
       .then((data) => {
         if (data.status === 'success' && data.samples) {
@@ -73,6 +73,7 @@ export default function StudioMainStage({ onOpenTempleDossier }) {
     try {
       const qRes = await fetch('/api/quality_check', {
         method: 'POST',
+        credentials: 'include',
         body: formData,
       });
       const qData = await qRes.json();
@@ -117,6 +118,7 @@ export default function StudioMainStage({ onOpenTempleDossier }) {
     try {
       const response = await fetch('/api/predict', {
         method: 'POST',
+        credentials: 'include',
         body: formData,
       });
 
@@ -190,7 +192,10 @@ export default function StudioMainStage({ onOpenTempleDossier }) {
   const handleBookmarkToggle = async () => {
     if (!result || !result.scan_id) return;
     try {
-      const res = await fetch(`/api/history/${result.scan_id}/bookmark`, { method: 'POST' });
+      const res = await fetch(`/api/history/${result.scan_id}/bookmark`, {
+        method: 'POST',
+        credentials: 'include'
+      });
       const data = await res.json();
       if (data.status === 'success') {
         setIsBookmarked(data.bookmarked);

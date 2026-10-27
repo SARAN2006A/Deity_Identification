@@ -358,6 +358,25 @@ def auth_logout():
     })
 
 
+@app.route("/api/auth/demo-login", methods=["POST"])
+def auth_demo_login():
+    demo_email = "reviewer@deityvision.ai"
+    user = db.get_user_by_email(demo_email)
+    if not user:
+        pw_hash = generate_password_hash("deity2026")
+        user_id = db.create_user("Heritage Reviewer", demo_email, pw_hash)
+    else:
+        user_id = user["id"]
+
+    session['user_id'] = user_id
+    user_info = db.get_user_by_id(user_id)
+    return jsonify({
+        "status": "success",
+        "message": "Reviewer session activated successfully.",
+        "user": user_info
+    })
+
+
 @app.route("/api/auth/me", methods=["GET"])
 def auth_me():
     user_id = session.get('user_id')

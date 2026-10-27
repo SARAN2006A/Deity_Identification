@@ -74,6 +74,19 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const demoLogin = async () => {
+    const res = await fetch('/api/auth/demo-login', {
+      method: 'POST',
+      credentials: 'include',
+    });
+    const data = await res.json();
+    if (!res.ok || data.status !== 'success') {
+      throw new Error(data.error || 'Failed to activate reviewer demo session.');
+    }
+    setUser(data.user);
+    return data.user;
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -82,6 +95,7 @@ export function AuthProvider({ children }) {
         isAuthenticated: !!user,
         login,
         register,
+        demoLogin,
         logout,
         checkAuth,
       }}

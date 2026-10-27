@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { X, Search, MapPin, Landmark, Award, BookOpen, Clock, Activity, Bookmark, BookmarkCheck, Trash2, Check, Sparkles } from 'lucide-react';
+import TempleModal from './TempleModal';
 
-export default function StudioDrawer({ activeDrawer, onClose, onSelectDeityForScan }) {
+export default function StudioDrawer({ activeDrawer, onClose, onSelectDeityForScan, onSwitchDrawer }) {
   const [temples, setTemples] = useState([]);
   const [templesLoading, setTemplesLoading] = useState(false);
   const [templesError, setTemplesError] = useState(null);
@@ -22,22 +23,22 @@ export default function StudioDrawer({ activeDrawer, onClose, onSelectDeityForSc
     if (!activeDrawer) return;
 
     if (activeDrawer === 'temples') {
-      fetch('/api/temples')
+      fetch('/api/temples', { credentials: 'include' })
         .then((res) => res.json())
         .then((data) => data.status === 'success' && setTemples(data.temples || []))
         .catch((err) => console.error(err));
     } else if (activeDrawer === 'shastras') {
-      fetch('/api/deities')
+      fetch('/api/deities', { credentials: 'include' })
         .then((res) => res.json())
         .then((data) => data.status === 'success' && setDeities(data.metadata || {}))
         .catch((err) => console.error(err));
     } else if (activeDrawer === 'history') {
-      fetch('/api/history?limit=50')
+      fetch('/api/history?limit=50', { credentials: 'include' })
         .then((res) => res.json())
         .then((data) => data.status === 'success' && setHistory(data.history || []))
         .catch((err) => console.error(err));
     } else if (activeDrawer === 'telemetry') {
-      fetch('/api/stats')
+      fetch('/api/stats', { credentials: 'include' })
         .then((res) => res.json())
         .then((data) => data.status === 'success' && setStats(data.stats || {}))
         .catch((err) => console.error(err));
@@ -49,7 +50,10 @@ export default function StudioDrawer({ activeDrawer, onClose, onSelectDeityForSc
   const handleToggleTempleBookmark = async (templeId, e) => {
     e.stopPropagation();
     try {
-      const res = await fetch(`/api/temples/${templeId}/bookmark`, { method: 'POST' });
+      const res = await fetch(`/api/temples/${templeId}/bookmark`, {
+        method: 'POST',
+        credentials: 'include'
+      });
       const data = await res.json();
       if (data.status === 'success') {
         setTemples((prev) =>
@@ -64,7 +68,10 @@ export default function StudioDrawer({ activeDrawer, onClose, onSelectDeityForSc
   const handleDeleteHistory = async (id, e) => {
     e.stopPropagation();
     try {
-      const res = await fetch(`/api/history/${id}`, { method: 'DELETE' });
+      const res = await fetch(`/api/history/${id}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
       const data = await res.json();
       if (data.status === 'success') {
         setHistory((prev) => prev.filter((item) => item.id !== id));
@@ -515,6 +522,21 @@ export default function StudioDrawer({ activeDrawer, onClose, onSelectDeityForSc
           )}
         </div>
       </div>
+
+      {/* Interactive Temple Dossier Modal */}
+      {selectedTemple && (
+        <TempleModal
+          temple={selectedTemple}
+          onClose={() => setSelectedTemple(null)}
+          onSelectDeity={(deity) => {
+            setSelectedTemple(null);
+            setActiveShastra(deity.toLowerCase());
+            if (onSwitchDrawer) {
+              onSwitchDrawer('shastras');
+            }
+          }}
+        />
+      )}
     </div>
   );
 }

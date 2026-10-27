@@ -11,31 +11,37 @@ export default function TempleModal({ temple, onClose, onSelectDeity }) {
           <X size={18} />
         </button>
 
-        <div style={{ borderRadius: '12px', overflow: 'hidden', height: '260px', marginBottom: '1.4rem', position: 'relative' }}>
+        <div style={{ borderRadius: '12px', overflow: 'hidden', height: '260px', marginBottom: '1.4rem', position: 'relative', border: '1px solid var(--border-gold-subtle)' }}>
           <img
             src={temple.image_url}
             alt={temple.name}
             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             onError={(e) => {
+              const fallbacks = {
+                shivan: '/temples/thanjavur_brihadisvara.jpg',
+                amman: '/temples/madurai_meenakshi.jpg',
+                murugan: '/temples/palani_murugan.jpg',
+                perumal: '/temples/srirangam_ranganatha.jpg',
+              };
               e.target.onerror = null;
-              e.target.src = '/temples/thanjavur_brihadisvara.jpg';
+              e.target.src = fallbacks[temple.deity] || '/temples/thanjavur_brihadisvara.jpg';
             }}
           />
           {temple.unesco && (
-            <div style={{ position: 'absolute', top: '1rem', right: '1rem' }} className="badge badge-gold">
+            <div style={{ position: 'absolute', top: '1rem', right: '1rem' }} className="badge-temple">
               <Award size={13} /> UNESCO World Heritage Site
             </div>
           )}
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.4rem' }}>
-          <span className="badge badge-purple" style={{ textTransform: 'capitalize' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.4rem', flexWrap: 'wrap' }}>
+          <span className="badge-temple" style={{ textTransform: 'capitalize' }}>
             {temple.deity_title}
           </span>
           <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>{temple.tamil_name}</span>
         </div>
 
-        <h2 style={{ fontSize: '1.7rem', color: '#fff', marginBottom: '0.6rem' }}>
+        <h2 style={{ fontSize: '1.7rem', color: 'var(--text-primary)', fontFamily: 'var(--font-serif)', marginBottom: '0.6rem' }}>
           {temple.name}
         </h2>
 
@@ -48,27 +54,27 @@ export default function TempleModal({ temple, onClose, onSelectDeity }) {
           </span>
         </div>
 
-        <div style={{ background: 'rgba(255, 255, 255, 0.03)', padding: '1.1rem', borderRadius: '10px', border: '1px solid var(--border-subtle)', marginBottom: '1.2rem' }}>
-          <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--gold-400)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.4rem' }}>
+        <div style={{ background: 'rgba(13, 38, 56, 0.75)', padding: '1.1rem', borderRadius: '10px', border: '1px solid var(--border-gold-subtle)', marginBottom: '1.2rem' }}>
+          <div style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--gold-300)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.4rem' }}>
             Architectural Marvels & Features
           </div>
-          <p style={{ color: 'var(--text-main)', fontSize: '0.92rem', lineHeight: '1.6' }}>
+          <p style={{ color: 'var(--text-primary)', fontSize: '0.92rem', lineHeight: '1.6' }}>
             {temple.highlights}
           </p>
         </div>
 
         <div style={{ marginBottom: '1.5rem' }}>
-          <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.4rem' }}>
+          <div style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.4rem' }}>
             Spiritual & Iconographic Significance
           </div>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', lineHeight: '1.6' }}>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: '1.6' }}>
             {temple.significance}
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: '0.8rem', justifyContent: 'flex-end' }}>
+        <div style={{ display: 'flex', gap: '0.8rem', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
           <button
-            className="btn-gold"
+            className="btn-gold-royal"
             onClick={() => {
               onClose();
               if (onSelectDeity) onSelectDeity(temple.deity);

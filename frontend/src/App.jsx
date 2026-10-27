@@ -95,6 +95,7 @@ function AppContent() {
       <StudioDrawer
         activeDrawer={activeDrawer}
         onClose={() => setActiveDrawer(null)}
+        onSwitchDrawer={(name) => setActiveDrawer(name)}
       />
 
       {/* Footer (only on scanner or app pages if not landing) */}

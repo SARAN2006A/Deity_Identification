@@ -13,7 +13,8 @@ import {
   Shield,
   ChevronDown,
   Sun,
-  Moon
+  Moon,
+  Activity
 } from 'lucide-react';
 
 export default function Navbar({ onOpenDrawer, apiStatus }) {
@@ -97,6 +98,13 @@ export default function Navbar({ onOpenDrawer, apiStatus }) {
             >
               <BookOpen size={15} /> Shilpa Shastras
             </button>
+
+            <button
+              className="studio-nav-btn"
+              onClick={() => handleNavClick('/scanner', 'telemetry')}
+            >
+              <Activity size={15} /> Telemetry
+            </button>
           </>
         )}
 
@@ -163,6 +171,15 @@ export default function Navbar({ onOpenDrawer, apiStatus }) {
                   <Shield size={15} /> My Saved Scans
                 </button>
                 <button
+                  className="dropdown-item-btn"
+                  onClick={() => {
+                    setUserDropdownOpen(false);
+                    handleNavClick('/scanner', 'telemetry');
+                  }}
+                >
+                  <Activity size={15} /> Model Telemetry & Specs
+                </button>
+                <button
                   className="dropdown-item-btn logout-danger"
                   onClick={handleLogout}
                 >
@@ -216,6 +233,9 @@ export default function Navbar({ onOpenDrawer, apiStatus }) {
                   </button>
                   <button className="mobile-nav-item" onClick={() => handleNavClick('/scanner', 'shastras')}>
                     <BookOpen size={16} /> Iconography & Shilpa Shastras
+                  </button>
+                  <button className="mobile-nav-item" onClick={() => handleNavClick('/scanner', 'telemetry')}>
+                    <Activity size={16} /> Neural Engine Telemetry
                   </button>
                 </>
               )}
