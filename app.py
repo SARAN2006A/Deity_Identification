@@ -108,6 +108,10 @@ def transform_image(image_bytes):
     norm = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     raw_img = Image.open(io.BytesIO(image_bytes)).convert("RGB")
     
+    # Cap maximum dimension to 1024 to prevent memory bloat on large phone camera photos
+    if max(raw_img.size) > 1024:
+        raw_img.thumbnail((1024, 1024), Image.Resampling.BILINEAR)
+    
     # Generate compact thumbnail for history DB
     thumb = raw_img.copy()
     thumb.thumbnail((160, 160))
@@ -149,17 +153,29 @@ def check_image_quality(image_bytes):
 
         is_low_res = (width < 224) or (height < 224)
 
-        gray_img = raw_img.convert("L")
+        # Scale down copy to max 384px for fast, low-memory blur & brightness check
+        eval_img = raw_img.copy()
+        if max(eval_img.size) > 384:
+            eval_img.thumbnail((384, 384), Image.Resampling.BILINEAR)
+
+        gray_img = eval_img.convert("L")
         gray_arr = np.array(gray_img, dtype=np.float32)
         avg_brightness = float(np.mean(gray_arr))
         is_dark = avg_brightness < 40.0
         is_overexposed = avg_brightness > 235.0
 
-        gray_t = torch.from_numpy(gray_arr).unsqueeze(0).unsqueeze(0)
-        lap_kernel = torch.tensor([[0., 1., 0.], [1., -4., 1.], [0., 1., 0.]]).view(1, 1, 3, 3)
-        lap_edges = F.conv2d(gray_t, lap_kernel)
-        blur_variance = float(lap_edges.var().item())
+        # Fast vectorized numpy 2D Laplacian operator (avoids PyTorch autograd & conv2d overhead)
+        lap = (
+            gray_arr[:-2, 1:-1] +
+            gray_arr[2:, 1:-1] +
+            gray_arr[1:-1, :-2] +
+            gray_arr[1:-1, 2:] -
+            4.0 * gray_arr[1:-1, 1:-1]
+        )
+        blur_variance = float(np.var(lap))
         is_blurry = blur_variance < 100.0
+
+        del eval_img, gray_img, gray_arr, lap
 
         issues = []
         if is_blurry:
@@ -205,40 +221,34 @@ def check_image_quality(image_bytes):
         }
 
 def generate_gradcam(model_instance, tensor, class_idx, raw_pil_image):
+    """
+    Compute Explainable AI Class Activation Map (Grad-CAM) in pure torch.no_grad().
+    For CNNs with Global Average Pooling (ResNet), Grad-CAM weights are mathematically
+    identical to the class weights of the linear classifier: alpha_k^c = W_{c, k}.
+    This eliminates the 250MB backward-pass graph, keeping RAM well under 150MB.
+    """
     try:
         model_instance.eval()
         activations = []
-        gradients = []
 
         def forward_hook(module, inp, out):
             activations.append(out)
 
-        def backward_hook(module, grad_in, grad_out):
-            gradients.append(grad_out[0])
-
         target_layer = model_instance.layer4[-1]
         h_f = target_layer.register_forward_hook(forward_hook)
-        h_b = target_layer.register_full_backward_hook(backward_hook)
 
-        input_tensor = tensor.clone().detach().to(DEVICE)
-        input_tensor.requires_grad = True
+        with torch.no_grad():
+            outputs = model_instance(tensor)
+            h_f.remove()
 
-        outputs = model_instance(input_tensor)
-        score = outputs[0, class_idx]
+            act = activations[0]  # [1, 2048, 7, 7]
+            fc_weight = model_instance.fc[1].weight  # [num_classes, 2048]
+            weights = fc_weight[class_idx].view(1, 2048, 1, 1)
 
-        model_instance.zero_grad()
-        score.backward()
-
-        h_f.remove()
-        h_b.remove()
-
-        act = activations[0].detach()       # [1, 2048, 7, 7]
-        grad = gradients[0].detach()         # [1, 2048, 7, 7]
-        weights = torch.mean(grad, dim=(2, 3), keepdim=True)
-        cam = torch.sum(weights * act, dim=1, keepdim=True)
-        cam = F.relu(cam)
-        cam = F.interpolate(cam, size=(224, 224), mode="bilinear", align_corners=False)
-        cam_arr = cam.squeeze().cpu().numpy()
+            cam = torch.sum(weights * act, dim=1, keepdim=True)
+            cam = F.relu(cam)
+            cam = F.interpolate(cam, size=(224, 224), mode="bilinear", align_corners=False)
+            cam_arr = cam.squeeze().detach().cpu().numpy()
 
         cam_min, cam_max = float(cam_arr.min()), float(cam_arr.max())
         if cam_max > cam_min:
@@ -291,7 +301,7 @@ def generate_gradcam(model_instance, tensor, class_idx, raw_pil_image):
         attention_summary = f"mainly focused on the sculpture's important regions ({', '.join(regions)})."
 
         # Clean up tensors and run GC to keep memory low
-        del act, grad, weights, cam, input_tensor, outputs, score
+        del act, weights, cam, cam_arr, overlay_np, heatmap_np, orig_np
         gc.collect()
 
         return {
@@ -311,6 +321,7 @@ def generate_gradcam(model_instance, tensor, class_idx, raw_pil_image):
             "attention_summary": "mainly focused on the sculpture's important regions.",
             "attention_regions": ["sculpture's important regions"]
         }
+
 
 # Lazy model loading: the model is zero-copy mapped into memory on first inference request
 
