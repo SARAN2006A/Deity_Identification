@@ -1,7 +1,10 @@
 import os
 import io
 import re
+import gc
+import time
 import base64
+import threading
 import torch
 import torch.nn.functional as F
 import numpy as np
@@ -9,6 +12,13 @@ from PIL import Image
 from torchvision import models, transforms
 from flask import Flask, request, jsonify, send_from_directory, make_response, session
 from werkzeug.security import generate_password_hash, check_password_hash
+
+# Limit PyTorch CPU thread pool to 1 thread to prevent memory/CPU thrashing on Render free tier
+try:
+    torch.set_num_threads(1)
+    torch.set_num_interop_threads(1)
+except Exception:
+    pass
 
 import db
 from temple_data import DEITY_METADATA, TEMPLES_DIRECTORY
@@ -48,32 +58,48 @@ def handle_preflight():
 
 # Global variables for model and transforms
 MODEL_PATH = "model.pt"
-DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+DEVICE = torch.device("cpu")
 model = None
 class_names = ["amman", "murugan", "perumal", "shivan"]
 
 def load_deity_model():
+    """Load PyTorch ResNet-50 model with aggressive memory minimization."""
     global model, class_names
+    if model is not None:
+        return model
+
     if not os.path.exists(MODEL_PATH):
         print(f"Warning: Model file '{MODEL_PATH}' not found yet!")
-        return
+        return None
     
     try:
-        checkpoint = torch.load(MODEL_PATH, map_location=DEVICE)
+        print("Loading PyTorch ResNet-50 checkpoint (low-memory profile)...")
+        checkpoint = torch.load(MODEL_PATH, map_location="cpu")
         class_names = checkpoint.get("class_names", ["amman", "murugan", "perumal", "shivan"])
-        
+        state_dict = checkpoint.pop("model_state", checkpoint)
+        del checkpoint
+        gc.collect()
+
         m = models.resnet50(weights=None)
         m.fc = torch.nn.Sequential(
             torch.nn.Dropout(0.5),
             torch.nn.Linear(m.fc.in_features, len(class_names)),
         )
-        m.load_state_dict(checkpoint["model_state"])
+        m.load_state_dict(state_dict)
+        del state_dict
+        gc.collect()
+
         m.to(DEVICE)
         m.eval()
+        for p in m.parameters():
+            p.requires_grad = False
+
         model = m
-        print(f"Model loaded successfully on {DEVICE}. Classes: {class_names}")
+        print(f"Model successfully loaded on {DEVICE}. Classes: {class_names}")
+        return model
     except Exception as e:
         print(f"Error loading model: {e}")
+        return None
 
 def transform_image(image_bytes):
     norm = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
@@ -261,6 +287,10 @@ def generate_gradcam(model_instance, tensor, class_idx, raw_pil_image):
 
         attention_summary = f"mainly focused on the sculpture's important regions ({', '.join(regions)})."
 
+        # Clean up tensors and run GC to keep memory low
+        del act, grad, weights, cam, input_tensor, outputs, score
+        gc.collect()
+
         return {
             "success": True,
             "overlay_image": overlay_b64,
@@ -279,8 +309,12 @@ def generate_gradcam(model_instance, tensor, class_idx, raw_pil_image):
             "attention_regions": ["sculpture's important regions"]
         }
 
-# Load model at startup
-load_deity_model()
+# Deferred background warm-up: allow Gunicorn to bind port 10000 immediately for Render
+def warm_up_model_deferred():
+    time.sleep(8)
+    load_deity_model()
+
+threading.Thread(target=warm_up_model_deferred, daemon=True).start()
 
 
 # ================= AUTHENTICATION ENDPOINTS =================
@@ -493,6 +527,10 @@ def quality_check_endpoint():
 @app.route("/api/predict", methods=["POST"])
 @app.route("/predict", methods=["POST"])
 def predict():
+    global model
+    if model is None:
+        load_deity_model()
+
     if model is None:
         return jsonify({"error": "PyTorch ResNet50 model checkpoint is not loaded. Ensure model.pt exists."}), 500
 
@@ -564,6 +602,10 @@ def predict():
             image_b64=thumb_b64,
             user_id=user_id
         )
+
+        # Free inference tensor and run garbage collection
+        del tensor
+        gc.collect()
 
         return jsonify({
             "success": True,
