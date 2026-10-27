@@ -9,12 +9,11 @@ __pycache__/
 
 # Datasets and Model Checkpoints
 deity_dataset/
-model.pt
 model.pt.classes.json
-*.pt
 *.pth
 *.onnx
 *.db
+!model.pt
 
 # OS & IDE metadata
 .DS_Store
