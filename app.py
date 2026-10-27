@@ -63,7 +63,7 @@ model = None
 class_names = ["amman", "murugan", "perumal", "shivan"]
 
 def load_deity_model():
-    """Load PyTorch ResNet-50 model with aggressive memory minimization."""
+    """Load PyTorch ResNet-50 model with zero-copy memory mapping directly from disk."""
     global model, class_names
     if model is not None:
         return model
@@ -73,20 +73,23 @@ def load_deity_model():
         return None
     
     try:
-        print("Loading PyTorch ResNet-50 checkpoint (low-memory profile)...")
-        checkpoint = torch.load(MODEL_PATH, map_location="cpu")
+        print("Loading PyTorch ResNet-50 checkpoint via zero-copy mmap...")
+        # mmap=True memory-maps tensor storages directly from disk without heap allocation
+        checkpoint = torch.load(MODEL_PATH, map_location="cpu", mmap=True)
         class_names = checkpoint.get("class_names", ["amman", "murugan", "perumal", "shivan"])
-        state_dict = checkpoint.pop("model_state", checkpoint)
-        del checkpoint
-        gc.collect()
+        state_dict = checkpoint.get("model_state", checkpoint)
 
         m = models.resnet50(weights=None)
         m.fc = torch.nn.Sequential(
             torch.nn.Dropout(0.5),
             torch.nn.Linear(m.fc.in_features, len(class_names)),
         )
-        m.load_state_dict(state_dict)
-        del state_dict
+        try:
+            m.load_state_dict(state_dict, assign=True)
+        except Exception:
+            m.load_state_dict(state_dict)
+
+        del checkpoint, state_dict
         gc.collect()
 
         m.to(DEVICE)
@@ -95,7 +98,7 @@ def load_deity_model():
             p.requires_grad = False
 
         model = m
-        print(f"Model successfully loaded on {DEVICE}. Classes: {class_names}")
+        print(f"Model successfully loaded via zero-copy mmap. Classes: {class_names}")
         return model
     except Exception as e:
         print(f"Error loading model: {e}")
@@ -309,12 +312,7 @@ def generate_gradcam(model_instance, tensor, class_idx, raw_pil_image):
             "attention_regions": ["sculpture's important regions"]
         }
 
-# Deferred background warm-up: allow Gunicorn to bind port 10000 immediately for Render
-def warm_up_model_deferred():
-    time.sleep(8)
-    load_deity_model()
-
-threading.Thread(target=warm_up_model_deferred, daemon=True).start()
+# Lazy model loading: the model is zero-copy mapped into memory on first inference request
 
 
 # ================= AUTHENTICATION ENDPOINTS =================
